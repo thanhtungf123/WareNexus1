@@ -4,23 +4,41 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/dao/PaymentCategoryDAO.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/RegisterController.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/RejectRentalServlet.java</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/model/Payment.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/model/RentalOrder.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/admin-approve-list.jsp</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/PayOSReturnServlet.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/CreateRentalOrderServlet.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/WarehouseServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/userhome.jsp</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/paymentQR.jsp</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/RentFormServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/SignContractServlet.java</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/dao/UserDAO.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/PayOSPaymentServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/signContract.jsp</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/WEB-INF/web.xml</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/AdminWarehouseServlet.java</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/util/DBUtil.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/dao/WarehouseDAO.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/WarehouseApiServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/admin-dashboard.jsp</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/admin-warehouse-detail.jsp</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/warehouseSearch.jsp</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/warehouse.jsp</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/dao/PaymentDAO.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/model/Customer.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/RegisterController.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/util/PayOSUtil.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/model/RentalOrder.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/WarehouseServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/CreateRentalOrderServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/dao/CustomerDAO.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/AdminApproveRentalOrderServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/PayOSPaymentServlet.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/model/Warehouse.java</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/admin-customers.jsp</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/dao/RentalOrderDAO.java</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/DeleteCustomerServlet.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/WarehouseApiServlet.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/dao/PaymentDAO.java</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/warehouse.jsp</file>
+            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/src/com/warenexus/controller/AdminWarehouseDetailServlet.java</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/admin-warehouse-view.jsp</file>
-            <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/warehouseSearch.jsp</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/payos_return.jsp</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/rentForm.jsp</file>
             <file>file:/D:/code/SWP/project/WareNexus_WarehouseIntegrated_Fixed1/WareNexus_WarehouseIntegrated_Fixed/web/register.jsp</file>

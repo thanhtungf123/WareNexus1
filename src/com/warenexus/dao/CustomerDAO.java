@@ -124,4 +124,24 @@ public class CustomerDAO {
         try { c.setActive(rs.getBoolean("IsActive")); } catch (SQLException ignore) {}
         return c;
     }
+    
+    public Customer getCustomerByAccountId(int accountId) {
+        String sql = "SELECT * FROM Customer WHERE AccountID = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, accountId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Customer c = new Customer();
+                c.setAccountId(rs.getInt("AccountID"));
+                c.setFullName(rs.getString("FullName"));
+                c.setPhone(rs.getString("Phone"));
+                c.setEmail(rs.getString("Email"));
+                return c;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

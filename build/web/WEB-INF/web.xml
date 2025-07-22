@@ -119,6 +119,18 @@
         <servlet-name>AdminWarehouseServlet</servlet-name>
         <servlet-class>com.warenexus.controller.AdminWarehouseServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminRejectRentalOrderServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.AdminRejectRentalOrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RejectRentalServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.RejectRentalServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminWarehouseDetailServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.AdminWarehouseDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>WarehouseServlet</servlet-name>
         <url-pattern>/warehouse</url-pattern>
@@ -231,6 +243,18 @@
     <servlet-mapping>
         <servlet-name>AdminWarehouseServlet</servlet-name>
         <url-pattern>/AdminWarehouseServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminRejectRentalOrderServlet</servlet-name>
+        <url-pattern>/AdminRejectRentalOrderServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RejectRentalServlet</servlet-name>
+        <url-pattern>/RejectRentalServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminWarehouseDetailServlet</servlet-name>
+        <url-pattern>/AdminWarehouseDetailServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>warehouse.jsp</welcome-file>

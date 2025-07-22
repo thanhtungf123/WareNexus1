@@ -3,6 +3,9 @@
 <%@ page import="jakarta.servlet.http.HttpSession" %>
 <%@ page import="com.warenexus.model.Account" %>
 <%@ page import="com.warenexus.dao.RentalOrderDAO, com.warenexus.model.RentalOrder" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
+
 <%
     if (session == null || session.getAttribute("user") == null) {
         response.sendRedirect("login.jsp");
@@ -18,6 +21,10 @@
     List<RentalOrder> list = dao.getPendingApprovalOrders();
 %>
 
+<%
+    Locale vietnam = new Locale("vi", "VN");
+    NumberFormat vndFormat = NumberFormat.getCurrencyInstance(vietnam);
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,13 +62,20 @@
           <td><%= ro.getWarehouseID() %></td>
           <td><%= ro.getStartDate() %></td>
           <td><%= ro.getEndDate() %></td>
-          <td>$<%= ro.getDeposit() %></td>
+          <td><%= vndFormat.format(ro.getDeposit()) %></td>
           <td><span class="badge bg-warning text-dark"><%= ro.getStatus() %></span></td>
-          <td>
-            <form method="post" action="admin/approve-rental" onsubmit="return confirm('Are you sure to approve this rental?');">
-              <input type="hidden" name="rentalOrderId" value="<%= ro.getRentalOrderID() %>">
-              <button type="submit" class="btn btn-success btn-sm">Approve</button>
-            </form>
+          <td class="d-flex gap-2">
+              <form method="post" action="admin/approve-rental" onsubmit="return confirm('Are you sure to approve this rental?');">
+                <input type="hidden" name="rentalOrderId" value="<%= ro.getRentalOrderID() %>">
+                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+              </form>
+
+              <form method="post" action="admin/reject-rental" onsubmit="return confirm('Are you sure to reject this rental?');">
+                <input type="hidden" name="rentalOrderId" value="<%= ro.getRentalOrderID() %>">
+                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+              </form>
+          </td>
+
           </td>
         </tr>
       <% } %>
