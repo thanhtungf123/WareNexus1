@@ -25,10 +25,19 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("user", user);
                 session.setAttribute("acc", user);
+                session.setAttribute("role", user.getRoleId());
                 session.setAttribute("accountId", user.getAccountId());
 
-                // Chuyển hướng mặc định (bạn có thể dùng role sau khi query thêm bảng AccountRole nếu cần)
-                response.sendRedirect("userhome.jsp");
+                String redirectURL = (String) session.getAttribute("redirectAfterLogin");
+
+                if (redirectURL != null) {
+                    session.removeAttribute("redirectAfterLogin");
+                    // Go back to previous page
+                    response.sendRedirect(redirectURL);
+                } else {
+                    response.sendRedirect("userhome.jsp");
+                }
+
             } else {
                 request.setAttribute("error", "Sai email hoặc mật khẩu hoặc tài khoản chưa kích hoạt.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);

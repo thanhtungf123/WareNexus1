@@ -42,7 +42,12 @@
     <h2>Pending Rental Contracts</h2>
     <p>Review and approve customer-submitted rental orders with completed deposits.</p>
   </div>
-
+    <!-- Back Button -->
+    <div class="mb-3">
+        <button class="btn btn-outline-secondary" onclick="history.back()">
+            <i class="bi bi-arrow-left-circle me-1"></i> Back
+        </button>
+    </div>
   <table class="table table-bordered table-hover mt-4 bg-white">
     <thead class="table-dark">
       <tr>

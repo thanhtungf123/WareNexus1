@@ -87,7 +87,9 @@
             <div class="user-email"><%= user.getEmail() %></div>
           </div>
           <ul class="dropdown-menu">
-            <li><a href="#profile" class="dropdown-item">View Profile</a></li>
+            <% if (user.getRoleId() == 3) { %>
+            <li><a href="view-profile" class="dropdown-item">View Profile</a></li>
+            <% } %>
             <li><a href="#change-password" class="dropdown-item">Change Password</a></li>
             <% if (user.getRoleId() == 1) { %>
               <li><a href="admin-dashboard.jsp" class="dropdown-item">Admin Dashboard</a></li>

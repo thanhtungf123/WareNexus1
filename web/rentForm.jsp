@@ -128,6 +128,7 @@
             </div>
 
             <div class="text-end">
+                <button type="button" class="btn btn-warning px-4" onclick="history.back()">Back</button>
                 <button type="submit" class="btn btn-success px-4">Pay with PayOS</button>
             </div>
         </form>

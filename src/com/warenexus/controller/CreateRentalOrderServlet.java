@@ -1,5 +1,6 @@
 package com.warenexus.controller;
 
+import com.microsoft.sqlserver.jdbc.StringUtils;
 import com.warenexus.dao.RentalOrderDAO;
 import com.warenexus.model.RentalOrder;
 
@@ -20,16 +21,22 @@ public class CreateRentalOrderServlet extends HttpServlet {
             // Lấy từ session
             HttpSession session = req.getSession();
             com.warenexus.model.Account acc = (com.warenexus.model.Account) session.getAttribute("acc");
-            if (acc == null) throw new ServletException("Chưa đăng nhập");
+            String redirectURL = req.getParameter("currentURL");
+            if (acc == null) {
+                session.setAttribute("redirectAfterLogin", redirectURL);
+                resp.sendRedirect("login.jsp");
+                return;
+            }
 
             int accountId = acc.getAccountId();
 
             // Lấy tham số
             String whIdParam = req.getParameter("warehouseId");
+            String statusWarehouse = req.getParameter("status");
             String startParam = req.getParameter("startDate");
             String endParam = req.getParameter("endDate");
 
-            if (whIdParam == null || startParam == null || endParam == null) {
+            if (StringUtils.isEmpty(whIdParam) || StringUtils.isEmpty(startParam) || StringUtils.isEmpty(endParam)) {
                 throw new ServletException("Thiếu thông tin đơn thuê");
             }
 

@@ -266,6 +266,13 @@
       flex-wrap: wrap;
     }
 
+    .warehouse-type-buttons-status {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
     .btn-type-filter {
       background: white;
       border: 2px solid var(--border-color);
@@ -292,6 +299,36 @@
     }
 
     .btn-type-filter.active:hover {
+      background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
+      transform: translateY(-2px);
+    }
+
+    .btn-type-filter-status {
+      background: white;
+      border: 2px solid var(--border-color);
+      color: var(--text-dark);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .btn-type-filter-status:hover {
+      border-color: var(--primary-blue);
+      background: var(--light-blue);
+      color: var(--primary-blue);
+      transform: translateY(-2px);
+    }
+
+    .btn-type-filter-status.active {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+      border-color: var(--primary-blue);
+      color: white;
+    }
+
+    .btn-type-filter-status.active:hover {
       background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
       transform: translateY(-2px);
     }
@@ -381,6 +418,21 @@
               <i class="bi bi-search"></i> Search Warehouses
             </button>
           </div>
+          <div class="warehouse-type-buttons-status">
+            <input type="hidden" id="status" name="status" value="${param.status}">
+            <button type="button" class="btn btn-type-filter-status ${param.status == 'Rented' ? 'active' : ''}" data-status="Rented">
+              <i class="bi-box-seam"></i> Rented
+            </button>
+            <button type="button" class="btn btn-type-filter-status ${param.status == 'Available' ? 'active' : ''}" data-status="Available">
+              <i class="bi-check-circle"></i> Available
+            </button>
+            <button type="button" class="btn btn-type-filter-status ${param.status == 'Maintenance' ? 'active' : ''}" data-status="Maintenance">
+              <i class="bi-tools"></i> Maintenance
+            </button>
+            <button type="button" class="btn btn-type-filter-status ${empty param.status ? 'active' : ''}" data-status="">
+              <i class="bi-layers"></i> All Types
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -398,7 +450,7 @@
               </div>
             </c:if>
           </div>
-          
+
           <div class="row g-3">
             <c:forEach var="w" items="${warehouses}">
               <div class="col-12">
@@ -574,6 +626,22 @@
         document.getElementById('typeId').value = typeId;
         
         // Submit the form
+        document.getElementById('searchForm').submit();
+      });
+    });
+
+    // Handle warehouse status filter buttons
+    document.querySelectorAll('.btn-type-filter-status').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        document.querySelectorAll('.btn-type-filter-status').forEach(btn => btn.classList.remove('active'));
+
+        this.classList.add('active');
+
+        const status = this.getAttribute('data-status');
+        document.getElementById('status').value = status;
+
         document.getElementById('searchForm').submit();
       });
     });

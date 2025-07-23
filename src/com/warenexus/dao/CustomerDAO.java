@@ -37,15 +37,32 @@ public class CustomerDAO {
     }
 
     public void update(Customer customer) throws Exception {
-        String sql = "UPDATE Customer SET FullName = ?, Phone = ? WHERE AccountID = ?";
+        if (customer == null || customer.getAccountId() <= 0) {
+            throw new IllegalArgumentException("Invalid customer data.");
+        }
+
+        String fullName = customer.getFullName();
+        String phone = customer.getPhone();
+        String email = customer.getEmail();
+
+        if (fullName == null || fullName.trim().isEmpty() ||
+                email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Full name and email are required.");
+        }
+
+        String sql = "UPDATE Customer SET FullName = ?, Phone = ?, Email = ? WHERE AccountID = ?";
         try (Connection c = DBUtil.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, customer.getFullName());
-            ps.setString(2, customer.getPhone());
-            ps.setInt(3, customer.getAccountId());
+
+            ps.setString(1, fullName.trim());
+            ps.setString(2, phone != null ? phone.trim() : null);
+            ps.setString(3, email.trim());
+            ps.setInt(4, customer.getAccountId());
+
             ps.executeUpdate();
         }
     }
+
 
     public void delete(int accountId) throws Exception {
         String sql = "DELETE FROM Customer WHERE AccountID = ?";

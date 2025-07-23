@@ -17,12 +17,27 @@ public class AdminWarehouseDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            int warehouseId = Integer.parseInt(req.getParameter("id"));
+            // Kiểm tra tham số đầu vào
+            String idParam = req.getParameter("id");
+            if (idParam == null || !idParam.matches("\\d+")) {
+                resp.sendRedirect("page-not-found.jsp");
+                return;
+            }
+
+            int warehouseId = Integer.parseInt(idParam);
             Warehouse warehouse = warehouseDAO.getById(warehouseId);
+
+            if (warehouse == null) {
+                req.setAttribute("errorMessage", "Warehouse not found.");
+                resp.sendRedirect("page-not-found.jsp");
+                return;
+            }
+
             req.setAttribute("warehouse", warehouse);
 
-            if (warehouse != null && "Rented".equalsIgnoreCase(warehouse.getStatus())) {
-                RentalOrder order = rentalOrderDAO.getLatestApprovedRentalByWarehouseId(warehouseId); // ✅ dùng hàm mới
+            // Nếu kho đang được thuê, lấy thông tin đơn thuê và khách hàng
+            if ("Rented".equalsIgnoreCase(warehouse.getStatus())) {
+                RentalOrder order = rentalOrderDAO.getLatestApprovedRentalByWarehouseId(warehouseId);
                 if (order != null) {
                     Customer customer = customerDAO.getCustomerByAccountId(order.getAccountID());
                     req.setAttribute("rentalOrder", order);
@@ -30,11 +45,13 @@ public class AdminWarehouseDetailServlet extends HttpServlet {
                 }
             }
 
+            // Forward đến trang JSP
             req.getRequestDispatcher("admin-warehouse-detail.jsp").forward(req, resp);
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log("Error in AdminWarehouseDetailServlet", e);
+            req.setAttribute("errorMessage", "Unable to load warehouse details.");
             resp.sendRedirect("admin-warehouse-view.jsp");
         }
     }
 }
-
