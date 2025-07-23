@@ -11,7 +11,7 @@ public class WarehouseDAO {
         "jdbc:sqlserver://localhost:1433;databaseName=WareHouseDB;" +
         "encrypt=true;trustServerCertificate=true";
     private static final String USER = "sa";
-    private static final String PASS = "1";
+    private static final String PASS = "123";
 
     private Connection getCon() throws SQLException {
         try { Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); }
