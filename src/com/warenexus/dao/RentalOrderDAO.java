@@ -87,4 +87,34 @@ public class RentalOrderDAO {
     }
 }
 
+    public RentalOrder getRentalOrderById(int rentalOrderId) throws Exception {
+        String sql = "SELECT * FROM RentalOrder WHERE RentalOrderID = ?";
+        RentalOrder rentalOrder = null;
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, rentalOrderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    rentalOrder = new RentalOrder();
+                    rentalOrder.setRentalOrderID(rs.getInt("RentalOrderID"));
+                    rentalOrder.setAccountID(rs.getInt("AccountID"));
+                    rentalOrder.setWarehouseID(rs.getInt("WarehouseID"));
+                    rentalOrder.setStartDate(rs.getDate("StartDate"));
+                    rentalOrder.setEndDate(rs.getDate("EndDate"));
+                    rentalOrder.setDeposit(rs.getDouble("Deposit"));
+                    rentalOrder.setTotalPrice(rs.getDouble("TotalPrice"));
+                    rentalOrder.setStatus(rs.getString("Status"));
+                    rentalOrder.setCreatedAt(rs.getDate("CreatedAt"));
+                    rentalOrder.setUpdatedAt(rs.getDate("UpdatedAt"));
+                    rentalOrder.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+                    rentalOrder.setDepositPaidAt(rs.getDate("DepositPaidAt"));
+                    rentalOrder.setDepositRefunded(rs.getBoolean("IsDepositRefunded"));
+                    rentalOrder.setDepositRefundedAt(rs.getDate("DepositRefundedAt"));
+                }
+            }
+        }
+        return rentalOrder;
+    }
+
+
 }

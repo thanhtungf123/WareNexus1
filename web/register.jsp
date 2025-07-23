@@ -257,6 +257,50 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+        #otpForm {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f9fbfc;
+            border: 1px solid #e0e6ed;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        #otpForm .form-group {
+            margin-bottom: 1rem;
+        }
+
+        #otpForm label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        #otpForm input[type="text"] {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        #otpForm button[type="submit"] {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #otpForm button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
 
         @media (max-width: 640px) {
             .signup-container {
@@ -295,25 +339,25 @@
             <div class="error-message" style="color:red;text-align:center;margin-bottom:1rem;">${error}</div>
         </c:if>
 
-        <form method="post" action="register">
+        <form method="post" action="register" onsubmit="showOtpForm();">
             <div class="form-group">
                 <label for="email">Email Address <span class="required">*</span></label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="${email}" required>
             </div>
 
             <div class="form-group">
                 <label for="password">Password <span class="required">*</span></label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" value="${password}" required>
             </div>
 
             <div class="form-group">
                 <label for="fullName">Full Name <span class="required">*</span></label>
-                <input type="text" id="fullName" name="fullName" required>
+                <input type="text" id="fullName" name="fullName" value="${fullName}" required>
             </div>
 
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone">
+                <input type="tel" id="phone" name="phone" value="${phone}">
             </div>
 
             <div class="form-group">
@@ -391,6 +435,15 @@
             <button type="submit" class="btn">Create Account</button>
         </form>
 
+        <!-- Form nhập OTP -->
+        <form id="otpForm" method="post" action="verify-otp" style="display:none; margin-top:2rem;">
+            <div class="form-group">
+                <label>Nhập mã OTP đã gửi vào email</label>
+                <input type="text" name="otp" required />
+            </div>
+            <button type="submit">Xác nhận OTP</button>
+        </form>
+
         <div class="back-link">
             <a href="warehouse.jsp">← Back to Homepage</a>
         </div>
@@ -415,7 +468,13 @@
 
     individualRadio.addEventListener('change', toggleFields);
     companyRadio.addEventListener('change', toggleFields);
+
+    window.onload = function() {
+            const showOtp = '${showOtpForm}';
+            if (showOtp === 'true') {
+                document.getElementById("otpForm").style.display = "block";
+            }
+        };
 </script>
 </body>
 </html>
-

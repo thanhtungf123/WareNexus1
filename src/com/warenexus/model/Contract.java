@@ -1,10 +1,14 @@
 package com.warenexus.model;
 
 public class Contract {
+    private int contractID;
     private int rentalOrderID;
     private String contractNumber;
     private String pdfPath;
     private String status;
+    private double price; // Giá tiền thuê
+    private double deposit; // Tiền đặt cọc
+    private int rentalPeriod; // Thời gian thuê (tính bằng tháng)
 
     // Getters & Setters
     public int getRentalOrderID() {
@@ -38,4 +42,16 @@ public class Contract {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public double getPrice() { return price; }
+
+    public void setPrice(double price) { this.price = price; }
+
+    public double getDeposit() { return deposit; }
+
+    public void setDeposit(double deposit) { this.deposit = deposit; }
+
+    public int getRentalPeriod() { return rentalPeriod; }
+
+    public void setRentalPeriod(int rentalPeriod) { this.rentalPeriod = rentalPeriod; }
 }

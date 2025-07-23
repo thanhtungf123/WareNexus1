@@ -16,7 +16,7 @@ public class SignContractServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
-            rentalOrderDAO.updateStatus(rentalOrderId, "Pending");
+            // rentalOrderDAO.updateStatus(rentalOrderId, "Pending");
 
             // Xoá session tránh truy cập lại
             req.getSession().removeAttribute("paidRentalOrderId");

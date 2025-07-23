@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.warenexus.model.*, com.warenexus.dao.*, java.text.SimpleDateFormat, java.util.Date" %>
+<%@ page import="com.warenexus.model.*, com.warenexus.dao.*, java.text.SimpleDateFormat, java.util.Date, java.text.NumberFormat, java.util.Locale" %>
 <%
     Account acc = (Account) session.getAttribute("acc");
     if (acc == null) {
@@ -16,7 +16,22 @@
     CustomerDAO cdao = new CustomerDAO();
     Customer customer = cdao.getByAccountId(acc.getAccountId());
 
+    RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
+    RentalOrder rentalOrder = rentalOrderDAO.getRentalOrderById(rentalOrderId);
+
     String today = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+
+    // Định dạng giá tiền
+    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+    String formattedPrice = currencyFormat.format(rentalOrder.getTotalPrice());
+    String formattedDeposit = currencyFormat.format(rentalOrder.getDeposit());
+
+    // Tính số tháng giữa StartDate và EndDate
+    long startTime = rentalOrder.getStartDate().getTime();
+    long endTime = rentalOrder.getEndDate().getTime();
+    long diff = endTime - startTime;
+    long days = diff / (1000 * 60 * 60 * 24);
+    long months = days / 30; // Giả sử 1 tháng có 30 ngày
 %>
 <!DOCTYPE html>
 <html>
@@ -24,6 +39,71 @@
     <title>Ký Hợp Đồng</title>
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f9fc;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #0056b3;
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-body {
+            background-color: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 14px;
+            padding: 8px 16px;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .signature-box {
+            border: 2px solid #ccc;
+            width: 100%;
+            height: 200px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .signature-box canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+
+        .btn-clear {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .btn-clear:hover {
+            background-color: #d32f2f;
+        }
+    </style>
 </head>
 <body>
 
@@ -63,7 +143,9 @@
 
     <p><strong>Ngày ký:</strong> <%= today %></p>
     <p><strong>Mã đơn thuê:</strong> <%= rentalOrderId %></p>
-
+    <p><strong>Giá thuê:</strong> <%= formattedPrice %> VND</p>
+    <p><strong>Tiền đặt cọc:</strong> <%= formattedDeposit %> VND</p>
+    <p><strong>Thời gian thuê:</strong> <%= months %> tháng</p>
     <hr>
 
     <h5>Thông Tin Các Bên</h5>
@@ -107,13 +189,26 @@
         </div>
     </div>
 
-    <form action="signContract" method="post" class="text-center mt-4">
+    <!-- Phần chữ ký -->
+    <div class="form-group">
+        <label for="signature">Chữ ký của bạn</label>
+        <div class="signature-box" id="signature-box">
+            <canvas id="signatureCanvas"></canvas>
+        </div>
+        <button type="button" class="btn btn-clear mt-2" id="clearSignature">Xóa chữ ký</button>
+        <div id="warningMessage" class="alert alert-danger mt-2" style="display:none;">
+            Bạn chưa ký. Chữ ký hệ thống mặc định sẽ được sử dụng.
+        </div>
+    </div>
+
+    <!-- Form để gửi chữ ký -->
+    <form id="signatureForm" action="requestOTP" method="POST" onsubmit="return validateSignature()">
         <input type="hidden" name="rentalOrderId" value="<%= rentalOrderId %>">
-        <button type="submit" class="btn btn-success px-4 py-2">Tôi đồng ý và ký hợp đồng</button>
+        <input type="hidden" name="signatureImage" id="signatureImage" />
+        <button type="button" class="btn btn-success" onclick="confirmAndProceed()">Tôi đồng ý và ký hợp đồng</button>
     </form>
   </div>
 </div>
-
 <!-- Footer -->
 <footer class="footer bg-light py-4 border-top">
   <div class="container text-center">
@@ -122,27 +217,80 @@
   </div>
 </footer>
 
-<!-- Script dropdown -->
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const avatar = document.getElementById('userAvatar');
-    const dropdown = document.getElementById('userDropdown');
-    avatar.addEventListener('click', function(e) {
-      e.stopPropagation();
-      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    // Signature canvas functionality
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    const signatureImageInput = document.getElementById('signatureImage');
+    const clearButton = document.getElementById('clearSignature');
+    const warningMessage = document.getElementById('warningMessage');
+
+    let drawing = false;
+
+    // Set canvas size
+    canvas.width = document.querySelector('.signature-box').offsetWidth;
+    canvas.height = document.querySelector('.signature-box').offsetHeight;
+
+    // Start drawing
+    canvas.addEventListener('mousedown', (e) => {
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(e.offsetX, e.offsetY);
     });
-    document.addEventListener('click', function(e) {
-      if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.style.display = 'none';
-      }
+
+    // Draw while mouse is down
+    canvas.addEventListener('mousemove', (e) => {
+        if (drawing) {
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        }
     });
-    document.getElementById('logoutBtn').addEventListener('click', function(e) {
-      e.preventDefault();
-      if (confirm('Bạn chắc chắn muốn đăng xuất?')) {
-        window.location.href = 'login.jsp';
-      }
+
+    // Stop drawing
+    canvas.addEventListener('mouseup', () => {
+        drawing = false;
+        saveSignature();
     });
-  });
+
+    // Clear the signature canvas
+    clearButton.addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        signatureImageInput.value = '';
+        warningMessage.style.display = 'none';
+    });
+
+    // Save the signature as an image (base64)
+    function saveSignature() {
+        const signatureDataUrl = canvas.toDataURL();
+        signatureImageInput.value = signatureDataUrl; // Store the image as base64 in the hidden input
+    }
+
+    // Xác nhận và tiếp tục
+    function confirmAndProceed() {
+        const signatureData = signatureImageInput.value;  // Lấy giá trị chữ ký từ canvas
+
+        if (!signatureData) {  // Nếu không có chữ ký
+            warningMessage.style.display = 'block';  // Hiển thị cảnh báo
+            signatureImageInput.value = ''; // chữ ký mặc định
+
+            // Hiển thị hộp thoại xác nhận
+            const userConfirmed = confirm("Bạn chưa ký. Chữ ký hệ thống mặc định sẽ được sử dụng. Bạn có đồng ý không?");
+            if (!userConfirmed) {
+                return;  // Nếu người dùng nhấn "Cancel", không gửi OTP
+            }
+        }
+
+        // Lưu chữ ký trước khi gửi form
+        saveSignature();
+
+        if (!signatureData) {
+            signatureImageInput.value = ''; // Đảm bảo không có hash hoặc base64 nếu không có chữ ký
+        }
+
+        // Tiến hành gửi yêu cầu OTP
+        document.getElementById('signatureForm').submit();
+    }
+
 </script>
 
 </body>

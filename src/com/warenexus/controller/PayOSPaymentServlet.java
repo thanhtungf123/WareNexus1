@@ -35,9 +35,10 @@ public class PayOSPaymentServlet extends HttpServlet {
             String returnUrl = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                     + req.getContextPath() + "/payos-return?rentalOrderId=" + rentalOrderId + "&status=PAID";
 
-            JSONObject response = PayOSUtil.createPaymentRequest(deposit, description, returnUrl);
-            JSONObject data = response.getJSONObject("data");
+            JSONObject response = PayOSUtil.createPaymentRequest(totalPrice, description, returnUrl);
             long orderCode = response.getLong("orderCode");
+            String qrCode = response.getString("qrCode");
+            String paymentLink = response.getString("paymentLink");
 
             // 4. Lưu thông tin giao dịch vào bảng Payment
             Payment payment = new Payment();
@@ -51,8 +52,8 @@ public class PayOSPaymentServlet extends HttpServlet {
             paymentDAO.insert(payment);
 
             // 5. Gửi thông tin QR sang trang thanh toán
-            req.setAttribute("qrUrl", data.getString("qrCode"));
-            req.setAttribute("paymentLink", data.getString("paymentLink"));
+            req.setAttribute("qrUrl", qrCode);
+            req.setAttribute("paymentLink", paymentLink);
             req.setAttribute("rentalOrderId", rentalOrderId);
             req.getRequestDispatcher("paymentQR.jsp").forward(req, resp);
 
