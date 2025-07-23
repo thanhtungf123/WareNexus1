@@ -2,11 +2,14 @@ package com.warenexus.controller;
 
 import com.warenexus.dao.WarehouseDAO;
 import com.warenexus.model.Warehouse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -22,9 +25,19 @@ public class WarehouseServlet extends HttpServlet {
         String id = req.getParameter("id");
         if (id != null) {
             try {
-                Warehouse w = dao.getById(Integer.parseInt(id));
-                if (w != null) {
-                    req.setAttribute("warehouse", w);
+                int warehouseId = Integer.parseInt(id);
+                Warehouse warehouse = dao.getById(warehouseId);
+
+                if (warehouse != null) {
+                    HttpSession session = req.getSession(false);
+                    String role = (session != null)
+                            ? String.valueOf((Integer) session.getAttribute("role"))
+                            : null;
+                    if (("1".equals(role) || "2".equals(role))) {
+                        resp.sendRedirect(req.getContextPath() + "/admin-warehouse-detail?id=" + warehouseId);
+                        return;
+                    }
+                    req.setAttribute("warehouse", warehouse);
                     req.getRequestDispatcher("warehouseDetail.jsp").forward(req, resp);
                     return;
                 }

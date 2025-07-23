@@ -18,6 +18,7 @@
     <meta charset="UTF-8">
     <title>Admin - Customer Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="css/style.css" rel="stylesheet">
     <style>
         body {
@@ -56,7 +57,12 @@
         <h2>Customer Management</h2>
         <p>Admin Panel - View and manage registered customers</p>
     </div>
-
+    <!-- Back Button -->
+    <div class="mb-3">
+        <button class="btn btn-outline-secondary" onclick="history.back()">
+            <i class="bi bi-arrow-left-circle me-1"></i> Back
+        </button>
+    </div>
     <div class="card shadow-sm">
         <div class="card-body">
             <table class="table table-bordered table-hover table-striped align-middle mb-0">
@@ -83,10 +89,9 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <form method="post" action="admin-delete-customer" onsubmit="return confirm('Are you sure you want to delete this customer?');">
-                                    <input type="hidden" name="accountId" value="<%= c.getAccountId() %>">
-                                    <button type="submit" class="btn-delete">Delete</button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal_<%= c.getAccountId() %>">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
                             </td>
                         </tr>
                     <% } %>
@@ -94,6 +99,32 @@
             </table>
         </div>
     </div>
+    <% for (Customer c : customers) { %>
+    <!-- Modal: Confirm Delete -->
+    <div class="modal fade" id="deleteModal_<%= c.getAccountId() %>" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete customer <strong><%= c.getFullName() %></strong>?
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="admin-delete-customer">
+                        <input type="hidden" name="accountId" value="<%= c.getAccountId() %>">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Yes, Delete
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
 </div>
 
 <jsp:include page="footer.jsp" />

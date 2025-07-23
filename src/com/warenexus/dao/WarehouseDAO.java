@@ -187,4 +187,17 @@ public class WarehouseDAO {
 
         return new Warehouse(id, name, addr, w, d, sz, pr, sts, type, img, lat, lon, desc, created);
     }
+
+    public boolean updateStatus(int warehouseId, String status) {
+        String sql = "UPDATE Warehouse SET Status = ?, UpdatedAt = GETDATE() WHERE WarehouseID = ?";
+        try (Connection c = getCon();
+             PreparedStatement st = c.prepareStatement(sql)) {
+            st.setString(1, status);
+            st.setInt(2, warehouseId);
+            return st.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
 }

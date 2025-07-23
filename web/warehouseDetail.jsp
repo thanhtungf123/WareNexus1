@@ -10,6 +10,8 @@
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap JS (bundle includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
@@ -258,20 +260,40 @@
                   </a>
 
                   <!-- new Rent button -->
-                  <form action="create-rental-order" method="post">
-                        <input type="hidden" name="warehouseId" value="${warehouse.id}" />
-                        <input type="hidden" name="accountId" value="${sessionScope.user.accountId}" />
-                        <input type="hidden" name="startDate" value="<%= java.time.LocalDate.now() %>" />
-                        <input type="hidden" name="endDate" value="<%= java.time.LocalDate.now().plusMonths(1) %>" />
+                  <form id="rentForm" action="create-rental-order" method="post">
+                    <input type="hidden" name="warehouseId" value="${warehouse.id}" />
+                    <input type="hidden" id="status" name="status" value="${warehouse.status}" />
+                    <input type="hidden" name="startDate" value="<%= java.time.LocalDate.now() %>" />
+                    <input type="hidden" name="endDate" value="<%= java.time.LocalDate.now().plusMonths(1) %>" />
 
-                        <button type="submit" class="btn-rent">
-                          <i class="bi bi-currency-exchange"></i> Rent Now
-                        </button>
-                 </form>
+                    <input type="hidden" name="currentURL" id="currentURL" />
+
+                    <button type="submit" class="btn-rent">
+                      <i class="bi bi-currency-exchange"></i> Thuê ngay
+                    </button>
+                  </form>
 
                   <a href="#" class="btn-contact">
                     <i class="bi bi-envelope"></i> Contact Owner
                   </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notification Modal -->
+          <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                  <h5 class="modal-title" id="statusModalLabel">Notification</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  The warehouse is not ready for rent. Please choose another warehouse or come back later.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
@@ -342,6 +364,16 @@
           <p style="margin-bottom:0;font-size:0.9rem;"><i class="bi bi-currency-dollar" style="color:#2563eb;"></i> $${warehouse.pricePerUnit}/m²</p>
         </div>
       `);
+      document.getElementById("currentURL").value = window.location.href;
+
+      document.getElementById("rentForm").addEventListener("submit", function (e) {
+        const status = document.getElementById("status").value;
+        if (status.toLowerCase() !== "available") {
+          e.preventDefault();
+          const modal = new bootstrap.Modal(document.getElementById("statusModal"));
+          modal.show();
+        }
+      });
     </script>
   </c:if>
 </body>

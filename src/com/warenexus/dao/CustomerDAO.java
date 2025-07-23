@@ -37,15 +37,32 @@ public class CustomerDAO {
     }
 
     public void update(Customer customer) throws Exception {
-        String sql = "UPDATE Customer SET FullName = ?, Phone = ? WHERE AccountID = ?";
+        if (customer == null || customer.getAccountId() <= 0) {
+            throw new IllegalArgumentException("Invalid customer data.");
+        }
+
+        String fullName = customer.getFullName();
+        String phone = customer.getPhone();
+        String email = customer.getEmail();
+
+        if (fullName == null || fullName.trim().isEmpty() ||
+                email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Full name and email are required.");
+        }
+
+        String sql = "UPDATE Customer SET FullName = ?, Phone = ?, Email = ? WHERE AccountID = ?";
         try (Connection c = DBUtil.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, customer.getFullName());
-            ps.setString(2, customer.getPhone());
-            ps.setInt(3, customer.getAccountId());
+
+            ps.setString(1, fullName.trim());
+            ps.setString(2, phone != null ? phone.trim() : null);
+            ps.setString(3, email.trim());
+            ps.setInt(4, customer.getAccountId());
+
             ps.executeUpdate();
         }
     }
+
 
     public void delete(int accountId) throws Exception {
         String sql = "DELETE FROM Customer WHERE AccountID = ?";
@@ -123,5 +140,25 @@ public class CustomerDAO {
         try { c.setEmail(rs.getString("Email")); } catch (SQLException ignore) {}
         try { c.setActive(rs.getBoolean("IsActive")); } catch (SQLException ignore) {}
         return c;
+    }
+    
+    public Customer getCustomerByAccountId(int accountId) {
+        String sql = "SELECT * FROM Customer WHERE AccountID = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, accountId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Customer c = new Customer();
+                c.setAccountId(rs.getInt("AccountID"));
+                c.setFullName(rs.getString("FullName"));
+                c.setPhone(rs.getString("Phone"));
+                c.setEmail(rs.getString("Email"));
+                return c;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

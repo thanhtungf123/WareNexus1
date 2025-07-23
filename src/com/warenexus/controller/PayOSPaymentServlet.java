@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import org.json.JSONObject;
+import vn.payos.PayOS;
 
 import java.io.IOException;
 import java.util.Date;
@@ -18,6 +19,11 @@ import java.util.Date;
 public class PayOSPaymentServlet extends HttpServlet {
     private final PaymentDAO paymentDAO = new PaymentDAO();
     private final RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
+    private static final String CLIENT_ID = "07a0181f-43af-43a1-b7f2-03fca43564f3";  // Thay bằng Client ID của bạn
+    private static final String API_KEY = "1ae5fc7b-cbd2-4372-86e4-0d8e3e225aee";  // Thay bằng API Key của bạn
+    private static final String CHECKSUM_KEY = "9eae37593e8d10a6eac7c93543c5c07c8671abbb0279f4b27e37f972c174e0e3";  // Thay bằng Checksum Key của bạn
+    // Khởi tạo đối tượng PayOS
+    private static PayOS payOS;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,7 +32,11 @@ public class PayOSPaymentServlet extends HttpServlet {
             int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
             double deposit = Double.parseDouble(req.getParameter("deposit"));
             double totalPrice = Double.parseDouble(req.getParameter("totalPrice"));
+            // Phương thức khởi tạo PayOS
 
+            if (payOS == null) {
+                payOS = new PayOS(CLIENT_ID, API_KEY, CHECKSUM_KEY);
+            }
             // 2. Cập nhật Deposit và TotalPrice vào DB
             rentalOrderDAO.updatePriceInfo(rentalOrderId, deposit, totalPrice);
 

@@ -7,15 +7,15 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/admin/delete-customer")
+@WebServlet("/admin-delete-customer")
 public class DeleteCustomerServlet extends HttpServlet {
     private final CustomerDAO customerDAO = new CustomerDAO();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
-            int accountId = Integer.parseInt(req.getParameter("id"));
+            int accountId = Integer.parseInt(req.getParameter("accountId"));
             customerDAO.delete(accountId);
         } catch (Exception e) {
             e.printStackTrace(); // Optionally log error
