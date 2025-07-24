@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBUtil {
-    private static final String DB_URL = "jdbc:sqlserver://192.168.20.102\\SQLEXPRESS;databaseName=WareHouseDB;encrypt=false;trustServerCertificate=true;";
+    private static final String DB_URL = "jdbc:sqlserver://localhost:1433;databaseName=WareHouseDB;encrypt=true;trustServerCertificate=true;";
     private static final String DB_USER = "sa";         // sửa nếu user của bạn khác
-    private static final String DB_PASSWORD = "1"; // sửa nếu mật khẩu của bạn khác
+    private static final String DB_PASSWORD = "123"; // sửa nếu mật khẩu của bạn khác
 
     public static Connection getConnection() {
         try {
