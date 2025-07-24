@@ -17,6 +17,7 @@ import com.itextpdf.layout.borders.Border;
 import com.warenexus.model.Customer;
 import com.warenexus.model.RentalOrder;
 
+
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -24,7 +25,7 @@ import java.util.Date;
 
 public class PDFGenerator {
 
-    public static String createPDFContract(Integer rentalOrderId, String signatureImage, String userEmail, Customer customer, RentalOrder rentalOrder) throws Exception {
+    public static String createPDFContract(Integer rentalOrderId, String signatureImage, String userEmail, Customer customer, RentalOrder rentalOrder, String fontPath) throws Exception {
         // Đường dẫn lưu file PDF
         String pdfDirectory = "C:/contracts/";  // Ví dụ: Thư mục lưu trữ trên Windows
         String pdfFilePath = pdfDirectory + "contract_" + rentalOrderId + ".pdf";
@@ -40,10 +41,8 @@ public class PDFGenerator {
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
 
-        // Sử dụng font hỗ trợ tiếng Việt (Arial ví dụ)
-        String fontPath = "C:/font/arial.ttf";  // Đảm bảo đường dẫn đúng với font của bạn
-        FontProgram fontProgram = FontProgramFactory.createFont(fontPath); // Đọc font từ tệp
-        PdfFont font = PdfFontFactory.createFont(fontProgram, "Identity-H"); // Dùng encoding "Identity-H" cho tiếng Việt
+        FontProgram fontProgram = FontProgramFactory.createFont(fontPath);
+        PdfFont font = PdfFontFactory.createFont(fontProgram, "Identity-H");
 
         // Tiêu đề hợp đồng ở giữa
         Paragraph title = new Paragraph("Hợp Đồng Thuê Kho")

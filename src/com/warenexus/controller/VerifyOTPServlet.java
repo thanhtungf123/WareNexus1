@@ -73,9 +73,9 @@ public class VerifyOTPServlet extends HttpServlet {
                 CustomerDAO cdao = new CustomerDAO();
                 Customer customer = cdao.getByAccountId(acc.getAccountId());
                 String userEmail = acc.getEmail(); // Lấy email từ đối tượng Account trong session
-
+                String fontPath = getServletContext().getRealPath("/fonts/arial.ttf");
                 // Tạo hợp đồng PDF và gửi email
-                createAndSendContract(request, response, rentalOrderId, signatureFilePath, userEmail, customer);
+                createAndSendContract(request, response, rentalOrderId, signatureFilePath, userEmail, customer, fontPath);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -90,14 +90,14 @@ public class VerifyOTPServlet extends HttpServlet {
     }
 
     // Phương thức tạo hợp đồng PDF và gửi email
-    private void createAndSendContract(HttpServletRequest request, HttpServletResponse response, Integer rentalOrderId, String signatureFilePath, String userEmail, Customer customer) throws Exception {
+    private void createAndSendContract(HttpServletRequest request, HttpServletResponse response, Integer rentalOrderId, String signatureFilePath, String userEmail, Customer customer, String fontPath) throws Exception {
         RentalOrder rentalOrder = rentalOrderDAO.getRentalOrderById(rentalOrderId);
         // Kiểm tra xem rentalOrder có hợp lệ không
         if (rentalOrder == null) {
             throw new Exception("Không tìm thấy RentalOrder với ID: " + rentalOrderId);
         }
         // Tạo hợp đồng PDF
-        String pdfFilePath = PDFGenerator.createPDFContract(rentalOrderId, signatureFilePath, userEmail, customer, rentalOrder);
+        String pdfFilePath = PDFGenerator.createPDFContract(rentalOrderId, signatureFilePath, userEmail, customer, rentalOrder, fontPath);
 
         // Gửi hợp đồng qua email
         sendContractEmail(userEmail, pdfFilePath, rentalOrderId);
