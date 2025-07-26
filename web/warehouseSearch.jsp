@@ -597,29 +597,30 @@
           }
 
           const popupContent = `
-        <div style="min-width: 200px;">
-          <h6 style="color: #2563eb; margin-bottom: 8px;">${warehouse.name}</h6>
-          <p style="margin-bottom: 4px; font-size: 0.9rem;">
-            <i class="bi bi-geo-alt" style="color: #2563eb;"></i>
-            ${warehouse.address}, ${warehouse.ward}, ${warehouse.district}
-          </p>
-          <p style="margin-bottom: 4px; font-size: 0.9rem;">
-            <i class="bi bi-arrows-expand" style="color: #2563eb;"></i>
-            ${warehouse.size} m²
-          </p>
-          <p style="margin-bottom: 8px; font-size: 0.9rem;">
-            <i class="bi bi-currency-dollar" style="color: #2563eb;"></i>
-            $${warehouse.pricePerUnit}/m²
-          </p>
-          <button
-            class="btn btn-sm btn-primary"
-            onclick="location.href='${ctx}/warehouse?id=${warehouse.id}'"
-            style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); border: none;"
-          >
-            <i class="bi bi-eye"></i> View Details
-          </button>
-        </div>
-      `;
+            <div style="min-width: 200px;">
+              <h6 style="color: #2563eb; margin-bottom: 8px;">\${warehouse.name}</h6>
+              <p style="margin-bottom: 4px; font-size: 0.9rem;">
+                <i class="bi bi-geo-alt" style="color: #2563eb;"></i>
+                \${warehouse.address}, \${warehouse.ward}, \${warehouse.district}
+              </p>
+              <p style="margin-bottom: 4px; font-size: 0.9rem;">
+                <i class="bi bi-arrows-expand" style="color: #2563eb;"></i>
+                \${warehouse.size} m²
+              </p>
+              <p style="margin-bottom: 8px; font-size: 0.9rem;">
+                <i class="bi bi-currency-dollar" style="color: #2563eb;"></i>
+                \$\${warehouse.pricePerUnit}/m²
+              </p>
+              <button
+                class="btn btn-sm btn-primary"
+                onclick="location.href='\${ctx}/warehouse?id=\${warehouse.id}'"
+                style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); border: none;"
+              >
+                <i class="bi bi-eye"></i> View Details
+              </button>
+            </div>
+          `;
+
 
           const marker = L.marker([lat, lon], { icon: blueIcon });
           marker.bindPopup(popupContent);

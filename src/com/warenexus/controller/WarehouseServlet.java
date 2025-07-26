@@ -71,7 +71,9 @@ public class WarehouseServlet extends HttpServlet {
                     .put("ward", w.getWard())
                     .put("district", w.getDistrict())
                     .put("latitude", w.getLatitude())
-                    .put("longitude", w.getLongitude()));
+                    .put("longitude", w.getLongitude())
+                    .put("size", w.getSize())
+                    .put("pricePerUnit", w.getPricePerUnit()));
             }
             resp.setContentType("application/json;charset=UTF-8");
             resp.getWriter().write(arr.toString());            // servlet JSON pattern :contentReference[oaicite:7]{index=7}
