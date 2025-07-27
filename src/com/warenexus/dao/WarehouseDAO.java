@@ -1,6 +1,7 @@
 package com.warenexus.dao;
 
 import com.warenexus.model.Warehouse;
+import com.warenexus.model.WarehouseImage;
 
 import java.sql.*;
 import java.util.*;
@@ -182,10 +183,10 @@ public class WarehouseDAO {
         String desc = rs.getString("Description");
         java.util.Date created = rs.getTimestamp("CreatedAt");
 
-        int imgNum = ((id - 1) % 12) + 1;
-        String img = "images/img" + imgNum + ".webp";
+        List<WarehouseImage> listImg = getImagesByWarehouseID(id);
+        String imgId = String.valueOf(listImg.get(0).getImageID());
 
-        return new Warehouse(id, name, addr, w, d, sz, pr, sts, type, img, lat, lon, desc, created);
+        return new Warehouse(id, name, addr, w, d, sz, pr, sts, type, imgId, lat, lon, desc, created);
     }
 
     public boolean updateStatus(int warehouseId, String status) {
@@ -200,4 +201,47 @@ public class WarehouseDAO {
             return false;
         }
     }
+
+    public List<WarehouseImage> getImagesByWarehouseID(int warehouseID){
+        List<WarehouseImage> list = new ArrayList<>();
+        String sql = "SELECT ImageID, ImageData, ImageFileName FROM WarehouseImage WHERE WarehouseID = ?";
+
+        try (Connection conn = getCon();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, warehouseID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    WarehouseImage img = new WarehouseImage();
+                    img.setImageID(rs.getInt("ImageID"));
+                    img.setImageData(rs.getBytes("ImageData"));
+                    img.setImageFileName(rs.getString("ImageFileName"));
+                    list.add(img);
+                }
+            }catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } catch (SQLException ex) {
+                ex.printStackTrace();
+        }
+        return list;
+    }
+
+    public byte[] getImageDataFromDB(int imageID) {
+        String sql = "SELECT ImageData FROM WarehouseImage WHERE ImageID = ?";
+        try (Connection conn = getCon();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, imageID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBytes("ImageData");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }

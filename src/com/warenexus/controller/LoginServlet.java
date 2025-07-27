@@ -39,7 +39,7 @@ public class LoginServlet extends HttpServlet {
                 }
 
             } else {
-                request.setAttribute("error", "Sai email hoặc mật khẩu hoặc tài khoản chưa kích hoạt.");
+                request.setAttribute("error", "Wrong email or password or account not activated.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
 

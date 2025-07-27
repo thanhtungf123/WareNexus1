@@ -38,6 +38,7 @@
         <form action="payos-payment" method="post">
             <input type="hidden" name="rentalOrderId" value="<%= rentalOrderId %>">
             <input type="hidden" name="warehouseId" value="<%= warehouseId %>">
+            <input type="hidden" name="currentURL" id="currentURL" />
             <input type="hidden" name="deposit" id="depositHidden">
             <input type="hidden" name="totalPrice" id="totalPriceHidden">
             <input type="hidden" name="startDate" id="startDateHidden">
@@ -175,7 +176,7 @@
             document.getElementById("endDateHidden").value = endDateFormatted;
         }
     }
-
+    document.getElementById("currentURL").value = window.location.href;
     window.onload = () => {
         const today = new Date().toISOString().split('T')[0];
         const input = document.getElementById("startDateInput");

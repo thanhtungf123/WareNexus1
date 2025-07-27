@@ -5,6 +5,7 @@ import com.warenexus.util.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RentalOrderDAO {
@@ -26,7 +27,16 @@ public class RentalOrderDAO {
             else throw new SQLException("Không lấy được RentalOrderID");
         }
     }
-
+    public void updateDates(int rentalOrderId, Date startDate, Date endDate ) throws Exception {
+        String sql = "UPDATE RentalOrder SET StartDate = ?, EndDate = ? WHERE RentalOrderID = ?";
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setDate(1, new java.sql.Date(startDate.getTime()));
+            ps.setDate(2, new java.sql.Date(endDate.getTime()));
+            ps.setInt(3, rentalOrderId);
+            ps.executeUpdate();
+        }
+    }
     public void updateStatus(int rentalOrderId, String status) throws Exception {
         String sql = "UPDATE RentalOrder SET Status = ? WHERE RentalOrderID = ?";
         try (Connection c = DBUtil.getConnection();

@@ -9,23 +9,11 @@ import java.util.Properties;
 public class EmailSender {
 
     public static void sendOTPEmail(String recipientEmail, String otp) {
-        Properties config = new Properties();
-
-        // Load file config.properties
-        try (InputStream input = EmailSender.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                throw new RuntimeException("Cannot find config.properties file.");
-            }
-            config.load(input);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load email configuration.", e);
-        }
-
         // Lấy thông tin từ file cấu hình
-        String senderEmail = config.getProperty("email.username");
-        String senderPassword = config.getProperty("email.password");
-        String host = config.getProperty("smtp.host");
-        String port = config.getProperty("smtp.port");
+        String senderEmail = ConfigUtil.getProperty("email.username");
+        String senderPassword = ConfigUtil.getProperty("email.password");
+        String host = ConfigUtil.getProperty("smtp.host");
+        String port = ConfigUtil.getProperty("smtp.port");
 
         // Cấu hình SMTP
         Properties properties = new Properties();

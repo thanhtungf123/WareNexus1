@@ -3,6 +3,7 @@ package com.warenexus.controller;
 import com.warenexus.dao.PaymentDAO;
 import com.warenexus.dao.RentalOrderDAO;
 import com.warenexus.model.Payment;
+import com.warenexus.util.ConfigUtil;
 import com.warenexus.util.PayOSUtil;
 
 import jakarta.servlet.ServletException;
@@ -13,25 +14,41 @@ import org.json.JSONObject;
 import vn.payos.PayOS;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @WebServlet("/payos-payment")
 public class PayOSPaymentServlet extends HttpServlet {
     private final PaymentDAO paymentDAO = new PaymentDAO();
     private final RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
-    private static final String CLIENT_ID = "07a0181f-43af-43a1-b7f2-03fca43564f3";  // Thay bằng Client ID của bạn
-    private static final String API_KEY = "1ae5fc7b-cbd2-4372-86e4-0d8e3e225aee";  // Thay bằng API Key của bạn
-    private static final String CHECKSUM_KEY = "9eae37593e8d10a6eac7c93543c5c07c8671abbb0279f4b27e37f972c174e0e3";  // Thay bằng Checksum Key của bạn
+    private static final String CLIENT_ID = ConfigUtil.getProperty("payos.client_id");  // Thay bằng Client ID của bạn
+    private static final String API_KEY = ConfigUtil.getProperty("payos.api_key"); // Thay bằng API Key của bạn
+    private static final String CHECKSUM_KEY = ConfigUtil.getProperty("payos.checksum_key");  // Thay bằng Checksum Key của bạn
     // Khởi tạo đối tượng PayOS
     private static PayOS payOS;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Lấy từ session
+        HttpSession session = req.getSession();
+        com.warenexus.model.Account acc = (com.warenexus.model.Account) session.getAttribute("acc");
+        String redirectURL = req.getParameter("currentURL");
+        if (acc == null) {
+            session.setAttribute("redirectAfterLogin", redirectURL);
+            resp.sendRedirect("login.jsp");
+            return;
+        }
         try {
             // 1. Lấy tham số từ form
             int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
             double deposit = Double.parseDouble(req.getParameter("deposit"));
             double totalPrice = Double.parseDouble(req.getParameter("totalPrice"));
+            String startDateStr = req.getParameter("startDate");
+            String endDateStr = req.getParameter("endDate");
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = sdf.parse(startDateStr);
+            Date endDate = sdf.parse(endDateStr);
             // Phương thức khởi tạo PayOS
 
             if (payOS == null) {
@@ -39,7 +56,7 @@ public class PayOSPaymentServlet extends HttpServlet {
             }
             // 2. Cập nhật Deposit và TotalPrice vào DB
             rentalOrderDAO.updatePriceInfo(rentalOrderId, deposit, totalPrice);
-
+            rentalOrderDAO.updateDates(rentalOrderId, startDate, endDate);
             // 3. Tạo request tới PayOS (giả lập hoặc thật)
             String description = "Deposit payment for rental order #" + rentalOrderId;
             String returnUrl = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
@@ -69,7 +86,7 @@ public class PayOSPaymentServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            req.setAttribute("error", "Payment initialization failed: " + e.getMessage());
+            req.setAttribute("error", "Payment initialization failed");
             req.getRequestDispatcher("error.jsp").forward(req, resp);
         }
     }

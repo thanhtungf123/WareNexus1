@@ -32,7 +32,6 @@ public class CreateRentalOrderServlet extends HttpServlet {
 
             // Lấy tham số
             String whIdParam = req.getParameter("warehouseId");
-            String statusWarehouse = req.getParameter("status");
             String startParam = req.getParameter("startDate");
             String endParam = req.getParameter("endDate");
 

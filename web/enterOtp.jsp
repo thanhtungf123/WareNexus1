@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter OTP</title>
+    <title>Enter OTP - WareNexus</title>
 
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -87,54 +87,82 @@
             justify-content: center;
             align-items: center;
         }
-
     </style>
 </head>
 <body>
 
-    <jsp:include page="header.jsp"/>
+<jsp:include page="header.jsp"/>
 
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h5>Enter OTP</h5>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h5>Enter OTP</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <span id="countdown" class="fw-bold text-danger">10:00</span>
                     </div>
-                    <div class="card-body">
-                        <h6 class="text-center mb-4">Please enter the OTP sent to your email to proceed with signing the contract</h6>
+                    <h6 class="text-center mb-4">Please enter the OTP sent to your email to proceed with contract signing</h6>
 
-                        <% if (errorMessage != null) { %>
-                            <div class="alert alert-danger">
-                                <%= errorMessage %>
-                            </div>
-                        <% } %>
-
-                        <form action="verifyOTP" method="POST">
-                            <div class="mb-3">
-                                <label for="otp" class="form-label">OTP:</label>
-                                <input type="text" name="otp" id="otp" class="form-control" required />
-                                <input type="hidden" name="rentalOrderId" value="<%= rentalOrderId %>" />
-                            </div>
-                            <button type="submit" class="btn btn-primary">Verify OTP</button>
-                        </form>
+                    <% if (errorMessage != null) { %>
+                    <div class="alert alert-danger">
+                        <%= errorMessage %>
                     </div>
+                    <% } %>
+
+                    <form action="verifyOTP" method="POST">
+                        <div class="mb-3">
+                            <label for="otp" class="form-label">OTP:</label>
+                            <input type="text" name="otp" id="otp" class="form-control" required />
+                            <input type="hidden" name="rentalOrderId" value="<%= rentalOrderId %>" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Verify OTP</button>
+                    </form>
                 </div>
             </div>
         </div>
-        <div class="d-flex gap-3 flex-wrap">
-            <button onclick="goBack()" class="btn-back">Quay lại</button>
-        </div>
     </div>
+    <div class="d-flex gap-3 flex-wrap justify-content-center mt-4">
+        <button onclick="goBack()" class="btn-back">🔙 Go Back</button>
+    </div>
+</div>
 
-    <jsp:include page="footer.jsp"/>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-            function goBack() {
-                window.history.back();
-            }
-        </script>
+<jsp:include page="footer.jsp"/>
 </body>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    window.onload = function () {
+        let timeLeft = 600; // 10 phút = 600 giây
+        const countdownElement = document.getElementById('countdown');
+
+        if (!countdownElement) {
+            console.error("Countdown element not found.");
+            return;
+        }
+
+        // Hiển thị thời gian ban đầu
+        countdownElement.textContent = "10:00";
+
+        const timer = setInterval(() => {
+            if (timeLeft >= 0) {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownElement.textContent = minutes + ":" + seconds.toString().padStart(2, '0');
+                timeLeft--;
+            } else {
+                clearInterval(timer);
+                countdownElement.textContent = "Expired";
+                const submitBtn = document.querySelector("form button[type='submit']");
+                if (submitBtn) submitBtn.disabled = true;
+                alert("OTP has expired. Please request a new one.");
+                window.history.back(); // 🔙 Quay lại trang
+            }
+        }, 1000);
+    };
+</script>
+
 </html>

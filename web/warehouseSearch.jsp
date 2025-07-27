@@ -458,7 +458,7 @@
             <c:forEach var="w" items="${warehouses}">
               <div class="col-12">
                 <div class="warehouse-card">
-                  <img src="${w.imageUrl}" class="card-img-top" alt="Warehouse ${w.id}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjFmNWY5Ii8+CjxwYXRoIGQ9Ik0yMDAgNzBMMTcwIDkwVjE0MEgyMzBWOTBMMjAwIDcwWiIgZmlsbD0iIzJiNTJkZiIvPgo8cGF0aCBkPSJNMTcwIDkwTDE0MCAzMFYxNDBIMTcwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8cGF0aCBkPSJNMjMwIDkwTDI2MCAzMFYxNDBIMjMwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8dGV4dCB4PSIyMDAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIj5XYXJlaG91c2UgSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='">
+                  <img src="image?id=${w.imageUrl}" class="card-img-top" alt="Warehouse ${w.id}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjFmNWY5Ii8+CjxwYXRoIGQ9Ik0yMDAgNzBMMTcwIDkwVjE0MEgyMzBWOTBMMjAwIDcwWiIgZmlsbD0iIzJiNTJkZiIvPgo8cGF0aCBkPSJNMTcwIDkwTDE0MCAzMFYxNDBIMTcwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8cGF0aCBkPSJNMjMwIDkwTDI2MCAzMFYxNDBIMjMwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8dGV4dCB4PSIyMDAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIj5XYXJlaG91c2UgSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='">
                   <div class="card-body">
                     <h5 class="card-title">${w.name}</h5>
                     <p class="card-text">

@@ -8,7 +8,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-@WebServlet("/reject-rental")
+@WebServlet("/admin/reject-rental")
 public class RejectRentalServlet extends HttpServlet {
     private final RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
 

@@ -341,8 +341,8 @@
         </div>
 
         <div class="signin-form">
-            <c:if test="${not empty param.error}">
-                <div class="error-message show">${param.error}</div>
+            <c:if test="${not empty error}">
+                <div class="error-message show">${error}</div>
             </c:if>
 
             <form method="post" action="${pageContext.request.contextPath}/login">
@@ -363,7 +363,6 @@
                     </div>
                     <a href="#" class="forgot-password">Forgot password?</a>
                 </div>
-
                 <button type="submit" class="btn">Sign In</button>
             </form>
 

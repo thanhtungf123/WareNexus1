@@ -169,7 +169,7 @@
           <!-- Main Content -->
           <div class="col-lg-8">
             <div class="detail-card">
-              <img src="${warehouse.imageUrl}"
+              <img src="image?id=${warehouse.imageUrl}"
                    class="warehouse-image"
                    alt="${warehouse.name}"
                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjFmNWY5Ii8+CjxwYXRoIGQ9Ik0yMDAgNzBMMTcwIDkwVjE0MEgyMzBWOTBMMjAwIDcwWiIgZmlsbD0iIzJiNTJkZiIvPgo8cGF0aCBkPSJNMTcwIDkwTDE0MCAzMFYxNDBIMTcwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8cGF0aCBkPSJNMjMwIDkwTDI2MCAzMFYxNDBIMjMwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8dGV4dCB4PSIyMDAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIj5XYXJlaG91c2UgSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='">
@@ -262,9 +262,8 @@
                   <!-- new Rent button -->
                   <form id="rentForm" action="create-rental-order" method="post">
                     <input type="hidden" name="warehouseId" value="${warehouse.id}" />
-                    <input type="hidden" id="status" name="status" value="${warehouse.status}" />
                     <input type="hidden" name="startDate" value="<%= java.time.LocalDate.now() %>" />
-                    <input type="hidden" name="endDate" value="<%= java.time.LocalDate.now().plusMonths(1) %>" />
+                    <input type="hidden" name="endDate" value="<%= java.time.LocalDate.now().plusMonths(3) %>" />
 
                     <input type="hidden" name="currentURL" id="currentURL" />
 
