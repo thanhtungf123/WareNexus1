@@ -3,6 +3,7 @@ package com.warenexus.controller;
 import com.warenexus.dao.PaymentDAO;
 import com.warenexus.dao.RentalOrderDAO;
 import com.warenexus.model.Payment;
+import com.warenexus.model.RentalOrder;
 import com.warenexus.util.ConfigUtil;
 import com.warenexus.util.PayOSUtil;
 
@@ -16,6 +17,7 @@ import vn.payos.PayOS;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 @WebServlet("/payos-payment")
 public class PayOSPaymentServlet extends HttpServlet {
@@ -77,6 +79,14 @@ public class PayOSPaymentServlet extends HttpServlet {
             payment.setPaymentDate(new Date());
 
             paymentDAO.insert(payment);
+
+            RentalOrder rentalOrder = rentalOrderDAO.getRentalOrderById(rentalOrderId);
+            if (!Objects.equals(rentalOrder.getStatus(), "Approved")) {
+                req.getRequestDispatcher("confirmBeforePayment.jsp").forward(req, resp);
+                return;
+            }
+
+            rentalOrderDAO.markNotificationAsSent(rentalOrderId);
 
             // 5. Gửi thông tin QR sang trang thanh toán
             req.setAttribute("qrUrl", qrCode);

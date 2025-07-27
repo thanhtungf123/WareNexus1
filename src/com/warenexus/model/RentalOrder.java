@@ -18,6 +18,7 @@ public class RentalOrder {
     private Date depositPaidAt;
     private boolean isDepositRefunded;
     private Date depositRefundedAt;
+    private boolean isNotificationSent;
 
     public int getRentalOrderID() { return rentalOrderID; }
     public void setRentalOrderID(int rentalOrderID) { this.rentalOrderID = rentalOrderID; }
@@ -63,4 +64,7 @@ public class RentalOrder {
 
     public Date getDepositRefundedAt() { return depositRefundedAt; }
     public void setDepositRefundedAt(Date depositRefundedAt) { this.depositRefundedAt = depositRefundedAt; }
+    public boolean isNotificationSent() { return isNotificationSent; }
+    public void setNotificationSent(boolean notificationSent) { isNotificationSent = notificationSent; }
+
 }

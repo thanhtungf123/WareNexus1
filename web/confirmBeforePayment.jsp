@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Pay Deposit - WareNexus</title>
+    <title>Awaiting Approval - WareNexus</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css" />
     <style>
@@ -19,7 +19,7 @@
             background-color: #f4f6f8;
             font-family: 'Segoe UI', sans-serif;
         }
-        .payment-box {
+        .confirm-box {
             max-width: 600px;
             margin: 60px auto;
             background: #fff;
@@ -28,18 +28,23 @@
             padding: 40px;
             text-align: center;
         }
-        .payment-box h3 {
+        .confirm-box h3 {
             color: #1976d2;
             margin-bottom: 20px;
         }
-        .btn-payment {
+        .alert-message {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 24px;
+        }
+        .btn-confirm {
             padding: 12px 24px;
             font-size: 16px;
             border-radius: 6px;
             text-decoration: none;
             transition: 0.3s ease;
         }
-        .btn-payment:hover {
+        .btn-confirm:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
@@ -62,27 +67,22 @@
 <body>
 <jsp:include page="header.jsp"/>
 
-<div class="payment-box">
-    <h3>💳 Click below to proceed with your deposit payment</h3>
-
-    <c:choose>
-        <c:when test="${not empty paymentLink}">
-            <a href="${paymentLink}" target="_blank" class="btn btn-payment btn-primary">Pay Now</a>
-        </c:when>
-        <c:otherwise>
-            <div class="alert alert-warning mt-3">Payment link is currently unavailable. Please try again later.</div>
-        </c:otherwise>
-    </c:choose>
+<div class="confirm-box">
+    <h3>⏳ Rental Order Awaiting Approval</h3>
+    <p class="alert-message">
+        Your rental request has not yet been approved by the administrator.<br/>
+        Please wait for confirmation before proceeding with the deposit payment.
+    </p>
 
     <div class="mt-4">
-        <button onclick="goBack()" class="btn btn-payment btn-back">🔙 Go Back</button>
-    </div>
+            <button onclick="goBack()" class="btn btn-payment btn-back">🔙 Go Back</button>
+        </div>
 </div>
 
 <jsp:include page="footer.jsp"/>
 <script>
     function goBack() {
-        window.location.href = "userhome";
+        window.history.back();
     }
 </script>
 </body>

@@ -67,6 +67,26 @@ public class RentalOrderDAO {
     }
     return list;
 }
+    public List<RentalOrder> getPendingOrders() throws Exception {
+        String sql = "SELECT * FROM RentalOrder WHERE Status = 'Pending'";
+        List<RentalOrder> list = new ArrayList<>();
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                RentalOrder ro = new RentalOrder();
+                ro.setRentalOrderID(rs.getInt("RentalOrderID"));
+                ro.setAccountID(rs.getInt("AccountID"));
+                ro.setWarehouseID(rs.getInt("WarehouseID"));
+                ro.setStartDate(rs.getDate("StartDate"));
+                ro.setEndDate(rs.getDate("EndDate"));
+                ro.setDeposit(rs.getDouble("Deposit"));
+                ro.setStatus(rs.getString("Status"));
+                list.add(ro);
+            }
+        }
+        return list;
+    }
 
     public void approveRentalOrder(int rentalOrderId, int staffAccountId) throws Exception {
         String sql = "UPDATE RentalOrder SET Status = 'Approved', StaffAccountID = ?, UpdatedAt = GETDATE() WHERE RentalOrderID = ?";
@@ -244,5 +264,43 @@ public class RentalOrderDAO {
     }
     return null;
 }
+
+    public List<RentalOrder> getUnnotifiedApprovedOrders(int accountId) throws SQLException {
+        List<RentalOrder> list = new ArrayList<>();
+        String sql = "SELECT * FROM RentalOrder " +
+                "WHERE AccountID = ? AND Status = 'Approved' AND IsNotificationSent = 0";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, accountId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    RentalOrder rental = new RentalOrder();
+                    rental.setRentalOrderID(rs.getInt("RentalOrderID"));
+                    rental.setAccountID(rs.getInt("AccountID"));
+                    rental.setWarehouseID(rs.getInt("WarehouseID"));
+                    rental.setStartDate(rs.getDate("StartDate"));
+                    rental.setEndDate(rs.getDate("EndDate"));
+                    rental.setDeposit(rs.getDouble("Deposit"));
+                    rental.setTotalPrice(rs.getDouble("TotalPrice"));
+                    rental.setStatus(rs.getString("Status"));
+                    list.add(rental);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public boolean markNotificationAsSent(int rentalOrderId) throws SQLException {
+        String sql = "UPDATE RentalOrder SET IsNotificationSent = 1 WHERE RentalOrderID = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, rentalOrderId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
 
 }

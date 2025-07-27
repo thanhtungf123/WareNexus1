@@ -18,7 +18,7 @@
     }
 
     RentalOrderDAO dao = new RentalOrderDAO();
-    List<RentalOrder> list = dao.getPendingApprovalOrders();
+    List<RentalOrder> list = dao.getPendingOrders();
 %>
 
 <%
