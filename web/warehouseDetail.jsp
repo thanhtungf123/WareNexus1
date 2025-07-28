@@ -217,7 +217,8 @@
                     <div class="info-text">
                       <div class="info-label">Price per m²</div>
                       <div class="info-value">
-                        <fmt:formatNumber value="${warehouse.pricePerUnit}" type="currency" currencySymbol="VNĐ" groupingUsed="true"/>
+                        <fmt:formatNumber value="${warehouse.pricePerUnit}" type="currency" groupingUsed="true"/>
+                        <span>VNĐ</span>
                       </div>
                     </div>
                   </div>

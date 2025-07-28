@@ -1,4 +1,5 @@
 <%@ page import="com.warenexus.model.*, com.warenexus.dao.*" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%
     Account acc = (Account) session.getAttribute("acc");
@@ -16,7 +17,8 @@
 
     WarehouseDAO wdao = new WarehouseDAO();
     Warehouse wh = wdao.getById(warehouseId);
-
+    ServiceFeesDAO serviceFeesDAO = new ServiceFeesDAO();
+    List<ServiceFee> serviceFees = serviceFeesDAO.getAllServiceFees();
     CustomerDAO cdao = new CustomerDAO();
     Customer cu = cdao.getByAccountId(acc.getAccountId());
 %>
@@ -102,6 +104,28 @@
                 </div>
             </div>
 
+            <!--  -->
+            <!-- Services -->
+            <h5 class="text-dark">Services</h5>
+            <div class="mb-3">
+                <label class="form-label">📦 Additional Services</label>
+                <%
+                    for (ServiceFee sf : serviceFees) {
+                        String code = sf.getServiceCode();
+                        String name = sf.getServiceName();
+                        int fee = sf.getFee();
+                %>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="services" value="<%= code %>" id="<%= code %>" onchange="calculateAll()">
+                    <label class="form-check-label" for="<%= code %>">
+                        <%= name %> - <%= String.format("%,d", fee) %> VNĐ
+                    </label>
+                </div>
+                <%
+                    }
+                %>
+            </div>
+
             <!-- Deposit -->
             <h5 class="text-dark">Deposit Calculation</h5>
             <div class="mb-3 row">
@@ -158,15 +182,29 @@
         const percent = parseFloat(document.getElementById("percent").value);
         const startDateStr = document.getElementById("startDateInput").value;
 
-        const total = price * size * months;
+        // Tính phí thuê kho
+        const baseTotal = price * size * months;
+
+        // Tính phí dịch vụ bổ sung
+        let serviceTotal = 0;
+        <% for (ServiceFee sf : serviceFees) { %>
+        if (document.getElementById("<%= sf.getServiceCode() %>").checked) {
+            serviceTotal += <%= sf.getFee() %>;
+        }
+        <% } %>
+
+        const total = baseTotal + serviceTotal;
         const deposit = total * (percent / 100);
 
+        // Hiển thị
         document.getElementById("depositDisplay").innerText = deposit.toLocaleString('vi-VN') + " VNĐ";
         document.getElementById("totalDisplay").innerText = total.toLocaleString('vi-VN') + " VNĐ";
 
+        // Gán vào hidden input
         document.getElementById("depositHidden").value = Math.round(deposit);
         document.getElementById("totalPriceHidden").value = Math.round(total);
 
+        // Tính ngày kết thúc
         if (startDateStr) {
             const endDate = addMonthsToDate(startDateStr, months);
             const endDateFormatted = endDate.toISOString().split('T')[0];
@@ -176,6 +214,7 @@
             document.getElementById("endDateHidden").value = endDateFormatted;
         }
     }
+
     document.getElementById("currentURL").value = window.location.href;
     window.onload = () => {
         const today = new Date().toISOString().split('T')[0];

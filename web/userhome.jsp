@@ -151,6 +151,52 @@
         <li><a href="#order">Place Rental Order</a></li>
         <li><a href="#warehouse-types">Warehouse Types</a></li>
         <li><a href="#services">Services</a></li>
+        <!-- Nút chuông -->
+        <div class="notif-wrapper">
+          <a href="javascript:void(0)" class="notif-bell-btn" onclick="toggleDropdown()" title="Thông báo mới">
+            <i class="fa fa-bell fa-lg"></i>
+            <% if (notifCount > 0) { %>
+            <span class="notif-count"><%= notifCount %></span>
+            <% } %>
+          </a>
+
+          <!-- Dropdown nổi -->
+          <div id="notifDropdown" class="notif-dropdown">
+            <%
+              if (unnotifiedOrders != null && !unnotifiedOrders.isEmpty()) {
+                for (RentalOrder rental : unnotifiedOrders) {
+                  String warehouseName = warehouseDAO.getById(rental.getWarehouseID()).getName();
+            %>
+            <div class="notif-item card mb-3 shadow-sm border-0">
+              <div class="card-body">
+                <h5 class="card-title text-success">✅ Order Approved: <%= warehouseName %></h5>
+                <p class="card-text">
+                  📅 Rental Period:<br/> <%= sdf.format(rental.getStartDate()) %> → <%= sdf.format(rental.getEndDate()) %><br/>
+                  💰 Deposit: <%= String.format("%,.0f", rental.getDeposit()) %> VNĐ<br/>
+                  🧾 Total Price: <%= String.format("%,.0f", rental.getTotalPrice()) %> VNĐ
+                </p>
+              <form action="payos-payment" method="post">
+                <input type="hidden" name="rentalOrderId" value="<%= rental.getRentalOrderID() %>">
+                <input type="hidden" name="deposit" value="<%= rental.getDeposit() %>">
+                <input type="hidden" name="totalPrice" value="<%= rental.getTotalPrice() %>">
+                <input type="hidden" name="startDate" value="<%= rental.getStartDate() %>">
+                <input type="hidden" name="endDate" value="<%= rental.getEndDate() %>">
+                <input type="hidden" name="currentURL" value="userhome.jsp">
+                <button type="submit">🔗  Proceed to Payment</button>
+              </form>
+            </div>
+            </div>
+            <%
+              }
+            } else {
+            %>
+            <p>📭 No new notifications</p>
+            <%
+              }
+            %>
+          </div>
+        </div>
+
       </ul>
     </nav>
     <div class="header-actions">
@@ -173,44 +219,6 @@
             <% } %>
             <li><a href="logout" class="dropdown-item logout" id="logoutBtn">Logout</a></li>
           </ul>
-        </div>
-      </div>
-      <!-- Nút chuông -->
-      <div class="notif-wrapper">
-        <a href="javascript:void(0)" class="notif-bell-btn" onclick="toggleDropdown()" title="Thông báo mới">
-          <i class="fa fa-bell fa-lg"></i>
-          <% if (notifCount > 0) { %>
-            <span class="notif-count"><%= notifCount %></span>
-          <% } %>
-        </a>
-
-        <!-- Dropdown nổi -->
-        <div id="notifDropdown" class="notif-dropdown">
-      <%
-          if (unnotifiedOrders != null && !unnotifiedOrders.isEmpty()) {
-            for (RentalOrder rental : unnotifiedOrders) {
-              String warehouseName = warehouseDAO.getById(rental.getWarehouseID()).getName();
-      %>
-            <div class="notif-item">
-              ✅ Đơn "<%= warehouseName %>" đã được duyệt.
-              <form action="payos-payment" method="post">
-                <input type="hidden" name="rentalOrderId" value="<%= rental.getRentalOrderID() %>">
-                 <input type="hidden" name="deposit" value="<%= rental.getDeposit() %>">
-                 <input type="hidden" name="totalPrice" value="<%= rental.getTotalPrice() %>">
-                 <input type="hidden" name="startDate" value="<%= rental.getStartDate() %>">
-                 <input type="hidden" name="endDate" value="<%= rental.getEndDate() %>">
-                 <input type="hidden" name="currentURL" value="userhome.jsp">
-                <button type="submit">🔗 Thanh toán</button>
-              </form>
-            </div>
-      <%
-            }
-          } else {
-      %>
-          <p>📭 Không có thông báo mới</p>
-      <%
-          }
-      %>
         </div>
       </div>
 

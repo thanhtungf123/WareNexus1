@@ -293,6 +293,15 @@ public class RentalOrderDAO {
         return list;
     }
 
+    public boolean updateIsNotificationSent(int rentalOrderId) throws SQLException {
+        String sql = "UPDATE RentalOrder SET IsNotificationSent = 0 WHERE RentalOrderID = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, rentalOrderId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     public boolean markNotificationAsSent(int rentalOrderId) throws SQLException {
         String sql = "UPDATE RentalOrder SET IsNotificationSent = 1 WHERE RentalOrderID = ?";
         try (Connection conn = DBUtil.getConnection();

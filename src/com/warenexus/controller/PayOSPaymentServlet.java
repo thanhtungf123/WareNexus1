@@ -2,6 +2,8 @@ package com.warenexus.controller;
 
 import com.warenexus.dao.PaymentDAO;
 import com.warenexus.dao.RentalOrderDAO;
+import com.warenexus.dao.ServiceFeesDAO;
+import com.warenexus.dao.WarehouseDAO;
 import com.warenexus.model.Payment;
 import com.warenexus.model.RentalOrder;
 import com.warenexus.util.ConfigUtil;
@@ -22,7 +24,9 @@ import java.util.Objects;
 @WebServlet("/payos-payment")
 public class PayOSPaymentServlet extends HttpServlet {
     private final PaymentDAO paymentDAO = new PaymentDAO();
+    private final WarehouseDAO warehouseDAO = new WarehouseDAO();
     private final RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
+    private final ServiceFeesDAO  serviceFeesDAO = new ServiceFeesDAO();
     private static final String CLIENT_ID = ConfigUtil.getProperty("payos.client_id");  // Thay bằng Client ID của bạn
     private static final String API_KEY = ConfigUtil.getProperty("payos.api_key"); // Thay bằng API Key của bạn
     private static final String CHECKSUM_KEY = ConfigUtil.getProperty("payos.checksum_key");  // Thay bằng Checksum Key của bạn
@@ -45,6 +49,7 @@ public class PayOSPaymentServlet extends HttpServlet {
             int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
             double deposit = Double.parseDouble(req.getParameter("deposit"));
             double totalPrice = Double.parseDouble(req.getParameter("totalPrice"));
+            String services = req.getParameter("services");
             String startDateStr = req.getParameter("startDate");
             String endDateStr = req.getParameter("endDate");
 
@@ -53,12 +58,31 @@ public class PayOSPaymentServlet extends HttpServlet {
             Date endDate = sdf.parse(endDateStr);
             // Phương thức khởi tạo PayOS
 
-            if (payOS == null) {
-                payOS = new PayOS(CLIENT_ID, API_KEY, CHECKSUM_KEY);
-            }
+            RentalOrder rentalOrder = rentalOrderDAO.getRentalOrderById(rentalOrderId);
+            // Lấy warehouseID liên kết
+            int warehouseId = rentalOrderDAO.getWarehouseIdByRentalOrderId(rentalOrderId);
+            warehouseDAO.updateStatus(warehouseId, "Rented");
+            rentalOrderDAO.updateIsNotificationSent(rentalOrderId);
             // 2. Cập nhật Deposit và TotalPrice vào DB
             rentalOrderDAO.updatePriceInfo(rentalOrderId, deposit, totalPrice);
             rentalOrderDAO.updateDates(rentalOrderId, startDate, endDate);
+
+            String[] selectedServices = req.getParameterValues("services");
+            if (selectedServices != null) {
+                for (String serviceCode : selectedServices) {
+                    serviceFeesDAO.insertRentalService(rentalOrderId, serviceCode);
+                }
+            }
+
+            if (!Objects.equals(rentalOrder.getStatus(), "Approved")) {
+                req.getRequestDispatcher("confirmBeforePayment.jsp").forward(req, resp);
+                return;
+            }
+
+            if (payOS == null) {
+                payOS = new PayOS(CLIENT_ID, API_KEY, CHECKSUM_KEY);
+            }
+
             // 3. Tạo request tới PayOS (giả lập hoặc thật)
             String description = "Deposit payment for rental order #" + rentalOrderId;
             String returnUrl = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
@@ -80,13 +104,6 @@ public class PayOSPaymentServlet extends HttpServlet {
 
             paymentDAO.insert(payment);
 
-            RentalOrder rentalOrder = rentalOrderDAO.getRentalOrderById(rentalOrderId);
-            if (!Objects.equals(rentalOrder.getStatus(), "Approved")) {
-                req.getRequestDispatcher("confirmBeforePayment.jsp").forward(req, resp);
-                return;
-            }
-
-            rentalOrderDAO.markNotificationAsSent(rentalOrderId);
 
             // 5. Gửi thông tin QR sang trang thanh toán
             req.setAttribute("qrUrl", qrCode);

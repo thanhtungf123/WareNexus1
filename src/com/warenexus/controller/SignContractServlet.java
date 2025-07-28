@@ -17,7 +17,7 @@ public class SignContractServlet extends HttpServlet {
         try {
             int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
             // rentalOrderDAO.updateStatus(rentalOrderId, "Pending");
-
+            rentalOrderDAO.markNotificationAsSent(rentalOrderId);
             // Xoá session tránh truy cập lại
             req.getSession().removeAttribute("paidRentalOrderId");
 

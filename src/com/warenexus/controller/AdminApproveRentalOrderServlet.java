@@ -9,7 +9,7 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/admin/approve-rental")
+@WebServlet("/admin-approve-rental")
 public class AdminApproveRentalOrderServlet extends HttpServlet {
     private final RentalOrderDAO rentalDAO = new RentalOrderDAO();
     private final WarehouseDAO warehouseDAO = new WarehouseDAO();

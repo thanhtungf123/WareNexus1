@@ -20,6 +20,7 @@ public class RentalOrder {
     private Date depositRefundedAt;
     private boolean isNotificationSent;
 
+
     public int getRentalOrderID() { return rentalOrderID; }
     public void setRentalOrderID(int rentalOrderID) { this.rentalOrderID = rentalOrderID; }
 

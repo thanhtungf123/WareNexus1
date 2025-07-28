@@ -70,12 +70,12 @@
           <td><%= vndFormat.format(ro.getDeposit()) %></td>
           <td><span class="badge bg-warning text-dark"><%= ro.getStatus() %></span></td>
           <td class="d-flex gap-2">
-              <form method="post" action="admin/approve-rental" onsubmit="return confirm('Are you sure to approve this rental?');">
+              <form method="post" action="admin-approve-rental" onsubmit="return confirm('Are you sure to approve this rental?');">
                 <input type="hidden" name="rentalOrderId" value="<%= ro.getRentalOrderID() %>">
                 <button type="submit" class="btn btn-success btn-sm">Approve</button>
               </form>
 
-              <form method="post" action="admin/reject-rental" onsubmit="return confirm('Are you sure to reject this rental?');">
+              <form method="post" action="admin-reject-rental" onsubmit="return confirm('Are you sure to reject this rental?');">
                 <input type="hidden" name="rentalOrderId" value="<%= ro.getRentalOrderID() %>">
                 <button type="submit" class="btn btn-danger btn-sm">Reject</button>
               </form>

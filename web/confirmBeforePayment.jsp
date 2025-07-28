@@ -75,14 +75,14 @@
     </p>
 
     <div class="mt-4">
-            <button onclick="goBack()" class="btn btn-payment btn-back">🔙 Go Back</button>
+            <button onclick="goBack()" class="btn btn-payment btn-back">🔙 Go Home</button>
         </div>
 </div>
 
 <jsp:include page="footer.jsp"/>
 <script>
     function goBack() {
-        window.history.back();
+        window.location.href = "userhome";
     }
 </script>
 </body>

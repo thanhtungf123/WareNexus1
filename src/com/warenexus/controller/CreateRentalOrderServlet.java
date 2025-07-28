@@ -2,14 +2,18 @@ package com.warenexus.controller;
 
 import com.microsoft.sqlserver.jdbc.StringUtils;
 import com.warenexus.dao.RentalOrderDAO;
+import com.warenexus.dao.ServiceFeesDAO;
 import com.warenexus.model.RentalOrder;
 
+import com.warenexus.model.ServiceFee;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/create-rental-order")
 public class CreateRentalOrderServlet extends HttpServlet {
@@ -54,6 +58,7 @@ public class CreateRentalOrderServlet extends HttpServlet {
             int rentalOrderId = dao.insert(ro);
 
             // Truyền cả rentalOrderId và warehouseId sang JSP
+
             req.setAttribute("rentalOrderId", rentalOrderId);
             req.setAttribute("warehouseId", warehouseId);
             req.getRequestDispatcher("rentForm.jsp").forward(req, resp);
