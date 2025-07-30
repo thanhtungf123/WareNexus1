@@ -12,7 +12,7 @@
   <div class="container header-container d-flex justify-content-between align-items-center py-3">
     <!-- Logo -->
     <div class="logo d-flex align-items-center">
-      <a href="userhome.jsp#search" class="d-flex align-items-center text-decoration-none">
+      <a href="userhome#search" class="d-flex align-items-center text-decoration-none">
         <img src="${pageContext.request.contextPath}/images/warehouse.png" alt="WareNexus Logo" class="logo-img" style="height: 40px; margin-right: 10px;">
         <span class="logo-text fs-4 fw-bold text-primary">WareNexus</span>
       </a>
@@ -21,9 +21,9 @@
     <!-- Navigation -->
     <nav class="nav">
       <ul class="nav-list list-unstyled d-flex gap-4 mb-0">
-        <li><a href="userhome.jsp#search" class="text-decoration-none text-dark fw-semibold">Search</a></li>
-        <li><a href="userhome.jsp#order" class="text-decoration-none text-dark fw-semibold">Order</a></li>
-        <li><a href="userhome.jsp#services" class="text-decoration-none text-dark fw-semibold">Services</a></li>
+        <li><a href="userhome#search" class="text-decoration-none text-dark fw-semibold">Search</a></li>
+        <li><a href="userhome#order" class="text-decoration-none text-dark fw-semibold">Order</a></li>
+        <li><a href="userhome#services" class="text-decoration-none text-dark fw-semibold">Services</a></li>
       </ul>
     </nav>
 

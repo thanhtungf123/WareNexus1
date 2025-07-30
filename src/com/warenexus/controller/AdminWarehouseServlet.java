@@ -3,15 +3,25 @@ package com.warenexus.controller;
 import com.warenexus.dao.WarehouseDAO;
 import com.warenexus.model.Warehouse;
 
+import com.warenexus.model.WarehouseImage;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/admin-warehouse")
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024, // 1MB
+        maxFileSize = 1024 * 1024 * 5,   // 5MB
+        maxRequestSize = 1024 * 1024 * 10 // 10MB
+)
 public class AdminWarehouseServlet extends HttpServlet {
     private final WarehouseDAO dao = new WarehouseDAO();
 
@@ -37,23 +47,42 @@ public class AdminWarehouseServlet extends HttpServlet {
             throws IOException {
         String action = req.getParameter("action");
         String idParam = req.getParameter("warehouseId");
+        if ("create".equals(action)) {
+            try (Connection conn = dao.getCon()) {
+                conn.setAutoCommit(false); // Bắt đầu transaction
+                try {
+                    Warehouse w = extractFromRequest(req);
+                    int warehouseId = dao.insert(w, conn); // Truyền connection vào
 
-        try {
-            if ("create".equals(action)) {
-                Warehouse w = extractFromRequest(req);
-                dao.insert(w);
-            } else if ("update".equals(action)) {
-                Warehouse w = extractFromRequest(req);
-                w.setId(Integer.parseInt(idParam));
-                dao.update(w);
-            } else if ("delete".equals(action)) {
-                int id = Integer.parseInt(idParam);
-                dao.delete(id);
+                    Part imagePart = req.getPart("warehouseImage");
+                    if (imagePart != null && imagePart.getSize() > 0) {
+                        String fileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
+                        InputStream inputStream = imagePart.getInputStream();
+                        byte[] imageBytes = inputStream.readAllBytes();
+
+                        WarehouseImage image = new WarehouseImage();
+                        image.setWarehouseID(String.valueOf(warehouseId));
+                        image.setImageFileName(fileName);
+                        image.setImageData(imageBytes);
+
+                        dao.insertWarehouseImage(image, conn); // Truyền connection vào
+                    }
+                    conn.commit(); // Thành công, commit
+                } catch (Exception e) {
+                    conn.rollback(); // Lỗi, rollback
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else if ("update".equals(action)) {
+            Warehouse w = extractFromRequest(req);
+            w.setId(Integer.parseInt(idParam));
+            dao.update(w);
+        } else if ("delete".equals(action)) {
+            int id = Integer.parseInt(idParam);
+            dao.deleteWarehouseWithImages(id);
         }
-
         resp.sendRedirect("admin-warehouse");
     }
 
@@ -72,6 +101,7 @@ public class AdminWarehouseServlet extends HttpServlet {
                       ? Double.parseDouble(req.getParameter("latitude")) : null);
         w.setLongitude(req.getParameter("longitude") != null && !req.getParameter("longitude").isBlank()
                       ? Double.parseDouble(req.getParameter("longitude")) : null);
+
         return w;
     }
 }

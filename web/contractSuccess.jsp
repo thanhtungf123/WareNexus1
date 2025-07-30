@@ -22,7 +22,7 @@
 
         <!-- Nút quay về trang chủ -->
         <div class="text-center mt-3">
-            <a href="userhome.jsp" class="btn btn-primary">Quay về trang chủ</a>
+            <a href="userhome" class="btn btn-primary">Quay về trang chủ</a>
         </div>
     </div>
 

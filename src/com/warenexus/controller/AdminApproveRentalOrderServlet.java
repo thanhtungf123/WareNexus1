@@ -38,6 +38,8 @@ public class AdminApproveRentalOrderServlet extends HttpServlet {
             System.out.println("Rental order " + rentalOrderId + " approved by admin " + admin.getAccountId());
 
             // Lấy warehouseID liên kết
+            rentalDAO.updateIsNotificationSent(rentalOrderId);
+            // Lấy warehouseID liên kết
             int warehouseId = rentalDAO.getWarehouseIdByRentalOrderId(rentalOrderId);
             System.out.println("WarehouseID found: " + warehouseId);
 

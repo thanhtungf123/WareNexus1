@@ -24,6 +24,7 @@ public class PayOSReturnServlet extends HttpServlet {
             if ("PAID".equalsIgnoreCase(status)) {
                 paymentDAO.updateStatusByRentalOrderId(rentalOrderId, "Completed"); // đúng enum status
                 rentalOrderDAO.markDepositPaid(rentalOrderId);
+                rentalOrderDAO.markNotificationAsSent(rentalOrderId);
                 req.getSession().setAttribute("paidRentalOrderId", rentalOrderId); // cho signContract.jsp
             }
 

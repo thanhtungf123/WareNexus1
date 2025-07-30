@@ -20,6 +20,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+    .error-message {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+  </style>
+
 </head>
 <body>
 
@@ -120,7 +132,7 @@
 <!-- Modal: Create -->
 <div class="modal fade" id="createModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <form action="admin-warehouse" method="post" class="modal-content">
+    <form action="admin-warehouse" method="post" class="modal-content" enctype="multipart/form-data">
       <div class="modal-header bg-primary-subtle">
         <h5 class="modal-title fw-bold text-dark">
           <i class="bi bi-plus-circle me-2"></i>Add New Warehouse
@@ -143,18 +155,26 @@
 
           <div class="col-md-12">
             <label class="form-label fw-semibold text-secondary text-uppercase small">Address</label>
-            <input name="address" class="form-control" required>
+            <input id="address" class="form-control">
           </div>
 
           <div class="col-md-6">
             <label class="form-label fw-semibold text-secondary text-uppercase small">Ward</label>
-            <input name="ward" class="form-control">
+            <input name="ward" id='ward' class="form-control">
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold text-secondary text-uppercase small">District</label>
-            <input name="district" class="form-control">
+            <input name="district" id="district" class="form-control">
           </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary text-uppercase small">Street address</label>
+            <input name="address" id='AddressLine' class="form-control">
+          </div>
+          <button type="button" class="btn btn-outline-secondary mt-2" onclick="getAddressFromDiv()">Get Address</button>
 
+          <button type="button" class="btn btn-outline-secondary mt-2" onclick="autoExtractWardDistrict()">Get Ward/District</button>
+
+          <div  class="mt-3" id="map"></div>
           <div class="col-md-4">
             <label class="form-label fw-semibold text-secondary text-uppercase small">Size (m²)</label>
             <input name="size" type="number" step="0.1" class="form-control" required>
@@ -175,13 +195,16 @@
 
           <div class="col-md-6">
             <label class="form-label fw-semibold text-secondary text-uppercase small">Latitude</label>
-            <input name="latitude" class="form-control">
+            <input name="latitude" id="latitude" class="form-control">
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold text-secondary text-uppercase small">Longitude</label>
-            <input name="longitude" class="form-control">
+            <input name="longitude" id="longitude" class="form-control">
           </div>
-
+          <div class="form-group">
+            <label for="warehouseImage">Image</label>
+            <input type="file" id="warehouseImage" name="warehouseImage" accept="image/*" class="form-control">
+          </div>
           <div class="col-md-12">
             <label class="form-label fw-semibold text-secondary text-uppercase small">Description</label>
             <textarea name="description" class="form-control" rows="3"></textarea>
@@ -292,5 +315,166 @@
 
 <jsp:include page="footer.jsp" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc7PnOq3Hxzq6dxeUVaY8WGLHIePl0swY&libraries=places&callback=initMap"></script>
 </body>
+<script>
+  let map, marker, geocoder, autocomplete;
+
+  function initMap() {
+    const defaultLocation = { lat: 16.047079, lng: 108.206230 };
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: defaultLocation,
+      zoom: 13
+    });
+
+    geocoder = new google.maps.Geocoder();
+
+    autocomplete = new google.maps.places.Autocomplete(document.getElementById("address"));
+    autocomplete.bindTo("bounds", map);
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        document.getElementById("addressError").textContent = "No details available for input: " + place.name;
+        return;
+      }
+      map.setCenter(place.geometry.location);
+      map.setZoom(17);
+      placeMarkerAndPanTo(place.geometry.location);
+    });
+
+    map.addListener("click", (event) => {
+      placeMarkerAndPanTo(event.latLng);
+      geocodeLatLng(event.latLng);
+    });
+
+    document.getElementById("address").addEventListener("blur", () => {
+      const address = document.getElementById("address").value;
+      if (address) {
+        geocoder.geocode({ address: address }, (results, status) => {
+          if (status === "OK") {
+            const location = results[0].geometry.location;
+            map.setCenter(location);
+            map.setZoom(17);
+            placeMarkerAndPanTo(location);
+          } else {
+            document.getElementById("addressError").textContent = "Không tìm thấy địa chỉ" + status;
+          }
+        });
+      }
+    });
+  }
+
+  function placeMarkerAndPanTo(latLng) {
+    if (marker) {
+      marker.setPosition(latLng);
+    } else {
+      marker = new google.maps.Marker({
+        position: latLng,
+        map: map
+      });
+    }
+    map.panTo(latLng);
+    document.getElementById("latitude").value = latLng.lat();
+    document.getElementById("longitude").value = latLng.lng();
+  }
+
+  function geocodeLatLng(latLng) {
+    geocoder.geocode({ location: latLng }, (results, status) => {
+      if (status === "OK") {
+        if (results[0]) {
+          document.getElementById("address").value = results[0].formatted_address;
+        } else {
+          document.getElementById("address").value = "No results found";
+        }
+      } else {
+        document.getElementById("address").placeholder = "Hãy nhập địa chỉ";
+      }
+    });
+  }
+
+  function validateForm() {
+    let isValid = true;
+    document.getElementById("addressError").textContent = "";
+    const address = document.getElementById("address").value;
+
+    if (!address) {
+      document.getElementById("addressError").textContent = "Address is required.";
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  function getAddressFromDiv() {
+    const addressElements = document.querySelectorAll('.address .address-line');
+    let fullAddress = '';
+
+    addressElements.forEach(el => {
+      fullAddress += el.textContent.trim() + ', ';
+    });
+
+    fullAddress = fullAddress.replace(/, $/, ''); // Xóa dấu phẩy cuối
+
+    // Gán vào input
+    document.getElementById('address').value = fullAddress;
+
+    // Tự động tìm tọa độ và hiển thị trên bản đồ
+    if (fullAddress && geocoder && map) {
+      geocoder.geocode({ address: fullAddress }, (results, status) => {
+        if (status === 'OK') {
+          const location = results[0].geometry.location;
+          map.setCenter(location);
+          map.setZoom(17);
+          placeMarkerAndPanTo(location, map);
+        } else {
+          //document.getElementById('addressError').textContent = 'Không tìm thấy địa chỉ: ' + status;
+        }
+      });
+    }
+  }
+
+  function autoExtractWardDistrict() {
+    const address = document.getElementById("address").value;
+    const parts = address.split(',').map(p => p.trim())
+
+    let AddressLine = "";
+    let ward = "";
+    let district = "";
+
+    // Ưu tiên tìm theo từ khóa
+    for (let i = 0; i < parts.length; i++) {
+      if (parts[i].match(/(Phường|Xã|Quận|Huyện)/i)) {
+        ward = parts[i];
+        if (i + 1 < parts.length) {
+          district = parts[i + 1];
+          AddressLine =  parts[i - 1];
+        }
+        break;
+      }
+    }
+
+    // Nếu không tìm thấy từ khóa, xử lý theo độ dài
+    if (!ward || !district) {
+      if (parts.length === 6) {
+        AddressLine =  parts[1];
+        ward = parts[2];
+        district = parts[3];
+      } else if (parts.length === 5) {
+        AddressLine =  parts[0];
+        ward = parts[1];
+        district = parts[2];
+      } else if (parts.length >= 4) {
+        AddressLine = parts[parts.length - 4];
+        district = parts[parts.length - 3];
+      }
+    }
+
+    document.getElementById("ward").value = ward;
+    document.getElementById("district").value = district;
+    document.getElementById("AddressLine").value = AddressLine;
+  }
+
+
+</script>
 </html>

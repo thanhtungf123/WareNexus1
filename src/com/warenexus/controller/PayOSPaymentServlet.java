@@ -59,10 +59,7 @@ public class PayOSPaymentServlet extends HttpServlet {
             // Phương thức khởi tạo PayOS
 
             RentalOrder rentalOrder = rentalOrderDAO.getRentalOrderById(rentalOrderId);
-            // Lấy warehouseID liên kết
-            int warehouseId = rentalOrderDAO.getWarehouseIdByRentalOrderId(rentalOrderId);
-            warehouseDAO.updateStatus(warehouseId, "Rented");
-            rentalOrderDAO.updateIsNotificationSent(rentalOrderId);
+
             // 2. Cập nhật Deposit và TotalPrice vào DB
             rentalOrderDAO.updatePriceInfo(rentalOrderId, deposit, totalPrice);
             rentalOrderDAO.updateDates(rentalOrderId, startDate, endDate);

@@ -114,7 +114,7 @@ public class AccountDAO {
     }
 
     public void delete(int id) throws Exception {
-        String sql = "DELETE FROM Account WHERE AccountID = ?";
+        String sql = "DELETE Account WHERE AccountID = ?";
         try (Connection c = DBUtil.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);

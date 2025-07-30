@@ -9,7 +9,7 @@
 
     Integer rentalOrderId = (Integer) session.getAttribute("paidRentalOrderId");
     if (rentalOrderId == null) {
-        response.sendRedirect("userhome.jsp");
+        response.sendRedirect("userhome");
         return;
     }
 
@@ -116,9 +116,9 @@
     </div>
     <nav class="nav">
       <ul class="nav-list list-unstyled d-flex gap-4 mb-0">
-        <li><a href="userhome.jsp#search" class="text-decoration-none text-dark">Tìm kiếm</a></li>
-        <li><a href="userhome.jsp#order" class="text-decoration-none text-dark">Đơn thuê</a></li>
-        <li><a href="userhome.jsp#services" class="text-decoration-none text-dark">Dịch vụ</a></li>
+        <li><a href="userhome#search" class="text-decoration-none text-dark">Tìm kiếm</a></li>
+        <li><a href="userhome#order" class="text-decoration-none text-dark">Đơn thuê</a></li>
+        <li><a href="userhome#services" class="text-decoration-none text-dark">Dịch vụ</a></li>
       </ul>
     </nav>
     <div class="user-account position-relative">

@@ -146,6 +146,38 @@ public class RentalOrderDAO {
         return rentalOrder;
     }
 
+    public List<RentalOrder> getRentalOrderByAccountID(int accountID) throws Exception {
+        String sql = "SELECT * FROM RentalOrder WHERE AccountID = ?";
+        List<RentalOrder>  rentalOrderList = new ArrayList<>();
+        RentalOrder rentalOrder = null;
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, accountID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    rentalOrder = new RentalOrder();
+                    rentalOrder.setRentalOrderID(rs.getInt("RentalOrderID"));
+                    rentalOrder.setAccountID(rs.getInt("AccountID"));
+                    rentalOrder.setWarehouseID(rs.getInt("WarehouseID"));
+                    rentalOrder.setStartDate(rs.getDate("StartDate"));
+                    rentalOrder.setEndDate(rs.getDate("EndDate"));
+                    rentalOrder.setDeposit(rs.getDouble("Deposit"));
+                    rentalOrder.setTotalPrice(rs.getDouble("TotalPrice"));
+                    rentalOrder.setStatus(rs.getString("Status"));
+                    rentalOrder.setCreatedAt(rs.getDate("CreatedAt"));
+                    rentalOrder.setUpdatedAt(rs.getDate("UpdatedAt"));
+                    rentalOrder.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+                    rentalOrder.setDepositPaidAt(rs.getDate("DepositPaidAt"));
+                    rentalOrder.setDepositRefunded(rs.getBoolean("IsDepositRefunded"));
+                    rentalOrder.setDepositRefundedAt(rs.getDate("DepositRefundedAt"));
+                    rentalOrderList.add(rentalOrder);
+                }
+            }
+        }
+        return rentalOrderList;
+    }
+
+
     public boolean updateRentalStatus(int rentalOrderId, String newStatus) {
     String sql = "UPDATE RentalOrder SET Status = ?, UpdatedAt = ? WHERE RentalOrderID = ?";
     try (Connection conn = DBUtil.getConnection();

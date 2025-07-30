@@ -17,11 +17,10 @@ public class SignContractServlet extends HttpServlet {
         try {
             int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
             // rentalOrderDAO.updateStatus(rentalOrderId, "Pending");
-            rentalOrderDAO.markNotificationAsSent(rentalOrderId);
             // Xoá session tránh truy cập lại
             req.getSession().removeAttribute("paidRentalOrderId");
 
-            req.setAttribute("message", "Ký hợp đồng thành công. Vui lòng chờ quản trị viên duyệt.");
+            req.setAttribute("message", "Ký hợp đồng thành công.");
             req.getRequestDispatcher("userhome.jsp").forward(req, resp);
         } catch (Exception e) {
             throw new ServletException("Lỗi khi ký hợp đồng", e);

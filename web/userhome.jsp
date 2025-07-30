@@ -151,6 +151,10 @@
         <li><a href="#order">Place Rental Order</a></li>
         <li><a href="#warehouse-types">Warehouse Types</a></li>
         <li><a href="#services">Services</a></li>
+
+        <% if (user.getRoleId() == 3) { %>
+        <li><a href="warehouse-history">Rental History</a></li>
+        <% } %>
         <!-- Nút chuông -->
         <div class="notif-wrapper">
           <a href="javascript:void(0)" class="notif-bell-btn" onclick="toggleDropdown()" title="Thông báo mới">
@@ -181,7 +185,7 @@
                 <input type="hidden" name="totalPrice" value="<%= rental.getTotalPrice() %>">
                 <input type="hidden" name="startDate" value="<%= rental.getStartDate() %>">
                 <input type="hidden" name="endDate" value="<%= rental.getEndDate() %>">
-                <input type="hidden" name="currentURL" value="userhome.jsp">
+                <input type="hidden" name="currentURL" value="userhome">
                 <button type="submit">🔗  Proceed to Payment</button>
               </form>
             </div>

@@ -78,7 +78,7 @@
     </div>
     <% } else { %>
     <div class="alert alert-danger mt-4">Payment failed or was canceled.</div>
-    <a href="userhome.jsp" class="btn btn-action btn-back">🔙 Return to Homepage</a>
+    <a href="userhome" class="btn btn-action btn-back">🔙 Return to Homepage</a>
     <% } %>
 
 

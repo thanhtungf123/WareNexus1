@@ -65,7 +65,7 @@ public class CustomerDAO {
 
 
     public void delete(int accountId) throws Exception {
-        String sql = "DELETE FROM Customer WHERE AccountID = ?";
+        String sql = "DELETE Customer WHERE AccountID = ?";
         try (Connection c = DBUtil.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, accountId);

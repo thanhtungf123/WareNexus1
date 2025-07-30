@@ -65,7 +65,7 @@ public class ReviewDAO {
 
     // Xoá đánh giá
     public void deleteByRentalOrderID(int rentalOrderID) throws SQLException {
-        String sql = "DELETE FROM Review WHERE RentalOrderID = ?";
+        String sql = "DELETE Review WHERE RentalOrderID = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, rentalOrderID);
         stmt.executeUpdate();

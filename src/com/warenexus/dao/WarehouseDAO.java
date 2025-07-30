@@ -14,7 +14,7 @@ public class WarehouseDAO {
     private static final String USER = "sa";
     private static final String PASS = "123";
 
-    private Connection getCon() throws SQLException {
+    public Connection getCon() throws SQLException {
         try { Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); }
         catch (ClassNotFoundException e) { throw new SQLException(e); }
         return DriverManager.getConnection(URL, USER, PASS);
@@ -108,11 +108,11 @@ public class WarehouseDAO {
         return list;
     }
 
-    public boolean insert(Warehouse w) {
+    public int insert(Warehouse w, Connection conn) {
         String sql = "INSERT INTO Warehouse (WarehouseTypeID, Name, AddressLine, Ward, District, Size, PricePerUnit, Status, Description, Latitude, Longitude, CreatedAt) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
-        try (Connection c = getCon();
-             PreparedStatement st = c.prepareStatement(sql)) {
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, GETDATE())";
+        try (PreparedStatement st = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             st.setInt(1, w.getWarehouseTypeId());
             st.setString(2, w.getName());
             st.setString(3, w.getAddress());
@@ -124,10 +124,19 @@ public class WarehouseDAO {
             st.setString(9, w.getDescription());
             st.setObject(10, w.getLatitude());
             st.setObject(11, w.getLongitude());
-            return st.executeUpdate() > 0;
+
+            int affectedRows = st.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = st.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1); // Trả về ID vừa insert
+                    }
+                }
+            }
+            return -1; // Insert thất bại
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return false;
+            return -1;
         }
     }
 
@@ -155,12 +164,35 @@ public class WarehouseDAO {
         }
     }
 
-    public boolean delete(int id) {
-        String sql = "DELETE FROM Warehouse WHERE WarehouseID = ?";
-        try (Connection c = getCon();
-             PreparedStatement st = c.prepareStatement(sql)) {
-            st.setInt(1, id);
-            return st.executeUpdate() > 0;
+    public boolean deleteWarehouseWithImages(int warehouseId) {
+        String deleteImagesSQL = "DELETE FROM WarehouseImage WHERE WarehouseID = ?";
+        String deleteWarehouseSQL = "DELETE FROM Warehouse WHERE WarehouseID = ?";
+
+        try (Connection conn = getCon()) {
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            try (PreparedStatement ps1 = conn.prepareStatement(deleteImagesSQL);
+                 PreparedStatement ps2 = conn.prepareStatement(deleteWarehouseSQL)) {
+
+                // Xóa ảnh
+                ps1.setInt(1, warehouseId);
+                ps1.executeUpdate();
+
+                // Xóa kho
+                ps2.setInt(1, warehouseId);
+                int affectedRows = ps2.executeUpdate();
+
+                conn.commit(); // Commit nếu không lỗi
+                return affectedRows > 0;
+
+            } catch (SQLException e) {
+                conn.rollback(); // Rollback nếu có lỗi
+                e.printStackTrace();
+                return false;
+            } finally {
+                conn.setAutoCommit(true); // Khôi phục trạng thái ban đầu
+            }
+
         } catch (SQLException ex) {
             ex.printStackTrace();
             return false;
@@ -243,5 +275,16 @@ public class WarehouseDAO {
         return null;
     }
 
+    public boolean insertWarehouseImage(WarehouseImage image, Connection conn) throws SQLException {
+        String sql = "INSERT INTO WarehouseImage (WarehouseID, ImageData, ImageFileName, CreatedAt) " +
+                "VALUES (?, ?, ?, GETDATE())";
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, Integer.parseInt(image.getWarehouseID()));
+            st.setBytes(2, image.getImageData());
+            st.setString(3, image.getImageFileName());
+
+            return st.executeUpdate() > 0;
+        }
+    }
 
 }

@@ -6,6 +6,6 @@
 </head>
 <body>
     <h2>Bạn không có quyền truy cập trang này.</h2>
-    <a href="userhome.jsp">Về trang chủ</a>
+    <a href="userhome">Về trang chủ</a>
 </body>
 </html>
