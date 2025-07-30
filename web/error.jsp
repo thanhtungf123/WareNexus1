@@ -26,6 +26,7 @@
     </style>
 </head>
 <body>
+    <jsp:include page="header.jsp"/>
 <div class="error-container">
     <div class="error-icon">⚠️</div>
     <h2 class="text-danger mt-3">Đã xảy ra lỗi</h2>
@@ -34,7 +35,7 @@
     </p>
     <a href="index.jsp" class="btn btn-outline-primary mt-4">← Quay lại trang chủ</a>
 </div>
-
+<jsp:include page="footer.jsp"/>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

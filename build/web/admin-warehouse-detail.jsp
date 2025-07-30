@@ -1,4 +1,5 @@
 <%@ page import="com.warenexus.model.Warehouse, com.warenexus.model.Customer, com.warenexus.model.RentalOrder" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     Warehouse warehouse = (Warehouse) request.getAttribute("warehouse");
@@ -32,8 +33,18 @@
         </div>
         <div class="card-body">
           <div class="text-center mb-3">
-            <img src="<%= warehouse.getImageUrl() != null ? warehouse.getImageUrl() : "images/default-warehouse.jpg" %>" 
-                 alt="Warehouse Image" class="img-fluid rounded shadow-sm" style="max-height: 300px; object-fit: cover;">
+            <c:choose>
+              <c:when test="${not empty warehouse.imageUrl}">
+                <img src="image?id=${warehouse.imageUrl}"
+                     alt="Warehouse Image" class="img-fluid rounded shadow-sm"
+                     style="max-height: 300px; object-fit: cover;">
+              </c:when>
+              <c:otherwise>
+                <img src="images/default-warehouse.jpg"
+                     alt="Default Warehouse Image" class="img-fluid rounded shadow-sm"
+                     style="max-height: 300px; object-fit: cover;">
+              </c:otherwise>
+            </c:choose>
           </div>
           <p><strong>Name:</strong> <%= warehouse.getName() %></p>
           <p><strong>Type ID:</strong> <%= warehouse.getWarehouseTypeId() %></p>
@@ -60,6 +71,7 @@
             <p><strong>Rental Period:</strong> 
               <%= sdf.format(rentalOrder.getStartDate()) %> to <%= sdf.format(rentalOrder.getEndDate()) %>
             </p>
+            <p><strong>Status:</strong> <%= rentalOrder.getStatus() %></p>
             <p><strong>Deposit:</strong> <%= nf.format(rentalOrder.getDeposit()) %> VND</p>
             <p><strong>Total Price:</strong> <%= nf.format(rentalOrder.getTotalPrice()) %> VND</p>
           </div>

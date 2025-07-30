@@ -266,6 +266,13 @@
       flex-wrap: wrap;
     }
 
+    .warehouse-type-buttons-status {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
     .btn-type-filter {
       background: white;
       border: 2px solid var(--border-color);
@@ -296,6 +303,36 @@
       transform: translateY(-2px);
     }
 
+    .btn-type-filter-status {
+      background: white;
+      border: 2px solid var(--border-color);
+      color: var(--text-dark);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .btn-type-filter-status:hover {
+      border-color: var(--primary-blue);
+      background: var(--light-blue);
+      color: var(--primary-blue);
+      transform: translateY(-2px);
+    }
+
+    .btn-type-filter-status.active {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+      border-color: var(--primary-blue);
+      color: white;
+    }
+
+    .btn-type-filter-status.active:hover {
+      background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%);
+      transform: translateY(-2px);
+    }
+
     @media (max-width: 768px) {
       .hero-section h1 {
         font-size: 2rem;
@@ -313,16 +350,19 @@
 </head>
 <body>
   <!-- Hero Section -->
-  <div class="hero-section">
+  <div class="hero-section" style="background-color: #343a40; padding: 60px 0; color: white;">
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-8">
-          <h1><i class="bi bi-buildings"></i> Warehouse Search</h1>
+          <a href="index.jsp" style="color: white; text-decoration: none;">
+            <h1><i class="bi bi-buildings"></i> Warehouse Search</h1>
+          </a>
           <p>Find the perfect warehouse space for your business needs</p>
         </div>
       </div>
     </div>
   </div>
+
 
   <div class="container">
     <!-- Search Section -->
@@ -381,6 +421,21 @@
               <i class="bi bi-search"></i> Search Warehouses
             </button>
           </div>
+          <div class="warehouse-type-buttons-status">
+            <input type="hidden" id="status" name="status" value="${param.status}">
+            <button type="button" class="btn btn-type-filter-status ${param.status == 'Rented' ? 'active' : ''}" data-status="Rented">
+              <i class="bi-box-seam"></i> Rented
+            </button>
+            <button type="button" class="btn btn-type-filter-status ${param.status == 'Available' ? 'active' : ''}" data-status="Available">
+              <i class="bi-check-circle"></i> Available
+            </button>
+            <button type="button" class="btn btn-type-filter-status ${param.status == 'Maintenance' ? 'active' : ''}" data-status="Maintenance">
+              <i class="bi-tools"></i> Maintenance
+            </button>
+            <button type="button" class="btn btn-type-filter-status ${empty param.status ? 'active' : ''}" data-status="">
+              <i class="bi-layers"></i> All Types
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -398,12 +453,12 @@
               </div>
             </c:if>
           </div>
-          
+
           <div class="row g-3">
             <c:forEach var="w" items="${warehouses}">
               <div class="col-12">
                 <div class="warehouse-card">
-                  <img src="${w.imageUrl}" class="card-img-top" alt="Warehouse ${w.id}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjFmNWY5Ii8+CjxwYXRoIGQ9Ik0yMDAgNzBMMTcwIDkwVjE0MEgyMzBWOTBMMjAwIDcwWiIgZmlsbD0iIzJiNTJkZiIvPgo8cGF0aCBkPSJNMTcwIDkwTDE0MCAzMFYxNDBIMTcwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8cGF0aCBkPSJNMjMwIDkwTDI2MCAzMFYxNDBIMjMwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8dGV4dCB4PSIyMDAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIj5XYXJlaG91c2UgSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='">
+                  <img src="image?id=${w.imageUrl}" class="card-img-top" alt="Warehouse ${w.id}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjFmNWY5Ii8+CjxwYXRoIGQ9Ik0yMDAgNzBMMTcwIDkwVjE0MEgyMzBWOTBMMjAwIDcwWiIgZmlsbD0iIzJiNTJkZiIvPgo8cGF0aCBkPSJNMTcwIDkwTDE0MCAzMFYxNDBIMTcwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8cGF0aCBkPSJNMjMwIDkwTDI2MCAzMFYxNDBIMjMwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8dGV4dCB4PSIyMDAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIj5XYXJlaG91c2UgSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='">
                   <div class="card-body">
                     <h5 class="card-title">${w.name}</h5>
                     <p class="card-text">
@@ -486,6 +541,24 @@
     });
     map.addLayer(markerCluster);
 
+    // Optional: show loading overlay
+    function showLoadingOverlay() {
+      document.getElementById('map').classList.add('loading');
+    }
+    function hideLoadingOverlay() {
+      document.getElementById('map').classList.remove('loading');
+    }
+
+    // Geocoding fallback
+    async function getCoordinates(address) {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${param.address}`);
+      const data = await response.json();
+      if (data.length > 0) {
+        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+      }
+      return null;
+    }
+
     // Build query string from form
     function buildQueryString() {
       const form = document.getElementById('searchForm');
@@ -496,56 +569,78 @@
     }
 
     // Load markers on map
-    function loadMarkers() {
+    async function loadMarkers() {
       markerCluster.clearLayers();
-      
-      fetch(ctx + '/warehouse?' + buildQueryString())
-        .then(response => response.json())
-        .then(warehouses => {
-          warehouses.forEach(warehouse => {
-            const marker = L.marker([warehouse.latitude, warehouse.longitude], {
-              icon: blueIcon
-            });
-            
-            const popupContent = `
-              <div style="min-width: 200px;">
-                <h6 style="color: #2563eb; margin-bottom: 8px;">${warehouse.name}</h6>
-                <p style="margin-bottom: 4px; font-size: 0.9rem;">
-                  <i class="bi bi-geo-alt" style="color: #2563eb;"></i> 
-                  ${warehouse.address}, ${warehouse.ward}, ${warehouse.district}
-                </p>
-                <p style="margin-bottom: 4px; font-size: 0.9rem;">
-                  <i class="bi bi-arrows-expand" style="color: #2563eb;"></i> 
-                  ${warehouse.size} m²
-                </p>
-                <p style="margin-bottom: 8px; font-size: 0.9rem;">
-                  <i class="bi bi-currency-dollar" style="color: #2563eb;"></i> 
-                  $${warehouse.pricePerUnit}/m²
-                </p>
-                <button 
-                  class="btn btn-sm btn-primary" 
-                  onclick="location.href='${ctx}/warehouse?id=${warehouse.id}'"
-                  style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); border: none;"
-                >
-                  <i class="bi bi-eye"></i> View Details
-                </button>
-              </div>
-            `;
-            
-            marker.bindPopup(popupContent);
-            markerCluster.addLayer(marker);
-          });
+      showLoadingOverlay();
 
-          // Adjust map view based on results
-          if (warehouses.length === 1) {
-            map.setView([warehouses[0].latitude, warehouses[0].longitude], 15);
-          } else if (warehouses.length > 1) {
-            map.fitBounds(markerCluster.getBounds());
+      try {
+        const response = await fetch(ctx + '/warehouse?' + buildQueryString());
+        const warehouses = await response.json();
+
+        const validMarkers = [];
+
+        for (const warehouse of warehouses) {
+          let lat = warehouse.latitude;
+          let lon = warehouse.longitude;
+
+          // Fallback if coordinates are missing
+          if (!lat || !lon) {
+            const fullAddress = `${warehouse.address}, ${warehouse.ward}, ${warehouse.district}, Đà Nẵng, Vietnam`;
+            const coords = await getCoordinates(fullAddress);
+            if (coords) {
+              lat = coords.lat;
+              lon = coords.lon;
+            } else {
+              console.warn(`Warehouse ${warehouse.id} has invalid address`);
+              continue;
+            }
           }
-        })
-        .catch(error => {
-          console.error('Error loading markers:', error);
-        });
+
+          const popupContent = `
+            <div style="min-width: 200px;">
+              <h6 style="color: #2563eb; margin-bottom: 8px;">\${warehouse.name}</h6>
+              <p style="margin-bottom: 4px; font-size: 0.9rem;">
+                <i class="bi bi-geo-alt" style="color: #2563eb;"></i>
+                \${warehouse.address}, \${warehouse.ward}, \${warehouse.district}
+              </p>
+              <p style="margin-bottom: 4px; font-size: 0.9rem;">
+                <i class="bi bi-arrows-expand" style="color: #2563eb;"></i>
+                \${warehouse.size} m²
+              </p>
+              <p style="margin-bottom: 8px; font-size: 0.9rem;">
+                <i class="bi bi-currency-dollar" style="color: #2563eb;"></i>
+                \$\${warehouse.pricePerUnit}/m²
+              </p>
+              <button
+                class="btn btn-sm btn-primary"
+                onclick="location.href='\${ctx}/warehouse?id=\${warehouse.id}'"
+                style="background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); border: none;"
+              >
+                <i class="bi bi-eye"></i> View Details
+              </button>
+            </div>
+          `;
+
+
+          const marker = L.marker([lat, lon], { icon: blueIcon });
+          marker.bindPopup(popupContent);
+          validMarkers.push(marker);
+        }
+
+        validMarkers.forEach(marker => markerCluster.addLayer(marker));
+
+        // Adjust map view
+        if (validMarkers.length === 1) {
+          map.setView(validMarkers[0].getLatLng(), 15);
+        } else if (validMarkers.length > 1) {
+          map.fitBounds(markerCluster.getBounds());
+        }
+
+      } catch (error) {
+        console.error('Error loading markers:', error);
+      } finally {
+        hideLoadingOverlay();
+      }
     }
 
     // Load initial markers
@@ -553,8 +648,6 @@
 
     // Handle form submission
     document.getElementById('searchForm').addEventListener('submit', function(e) {
-      // Allow normal form submission to update the card list
-      // Then update the map after a short delay
       setTimeout(loadMarkers, 100);
     });
 
@@ -562,18 +655,20 @@
     document.querySelectorAll('.btn-type-filter').forEach(button => {
       button.addEventListener('click', function(e) {
         e.preventDefault();
-        
-        // Remove active class from all buttons
         document.querySelectorAll('.btn-type-filter').forEach(btn => btn.classList.remove('active'));
-        
-        // Add active class to clicked button
         this.classList.add('active');
-        
-        // Set the hidden input value
-        const typeId = this.getAttribute('data-type');
-        document.getElementById('typeId').value = typeId;
-        
-        // Submit the form
+        document.getElementById('typeId').value = this.getAttribute('data-type');
+        document.getElementById('searchForm').submit();
+      });
+    });
+
+    // Handle warehouse status filter buttons
+    document.querySelectorAll('.btn-type-filter-status').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.btn-type-filter-status').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('status').value = this.getAttribute('data-status');
         document.getElementById('searchForm').submit();
       });
     });
@@ -584,7 +679,6 @@
       const originalText = button.innerHTML;
       button.innerHTML = '<i class="bi bi-hourglass-split"></i> Searching...';
       button.disabled = true;
-      
       setTimeout(() => {
         button.innerHTML = originalText;
         button.disabled = false;

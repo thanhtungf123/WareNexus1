@@ -1,11 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.warenexus.model.Account" %>
+<%@ page import="com.warenexus.model.RentalOrder" %>
+<%@ page import="com.warenexus.dao.WarehouseDAO" %>
+<%@ page import="java.util.List, java.text.SimpleDateFormat, java.util.Date" %>
+
 <%
     if (session == null || session.getAttribute("user") == null) {
         response.sendRedirect("login.jsp");
         return;
     }
     Account user = (Account) session.getAttribute("user");
+    List<RentalOrder> unnotifiedOrders = (List<RentalOrder>) session.getAttribute("unnotifiedOrders");
+    WarehouseDAO warehouseDAO = new WarehouseDAO();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    int notifCount = (unnotifiedOrders != null) ? unnotifiedOrders.size() : 0;
+
 %>
 
 <!DOCTYPE html>
@@ -15,6 +24,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WareNexus - Dashboard</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+
   <style>
     .user-account { position: relative; display: inline-block; }
     .user-avatar {
@@ -54,6 +68,69 @@
       color: white; padding: 1rem; margin: 2rem 0;
       border-radius: 0.5rem; text-align: center;
     }
+    /* Gói phần chuông và dropdown */
+    .notif-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Nút chuông */
+    .notif-bell-btn {
+      color: #eb8b25;
+      font-size: 20px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    /* Số lượng thông báo */
+    .notif-count {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      padding: 2px 5px;
+      border-radius: 50%;
+    }
+
+    /* Dropdown nổi */
+    .notif-dropdown {
+      position: absolute;
+      top: 35px;
+      left: 0;
+      width: 320px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      padding: 12px;
+      display: none;
+      z-index: 1000;
+    }
+
+    /* Item thông báo */
+    .notif-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    .notif-item:last-child {
+      border-bottom: none;
+    }
+
+    .notif-item button {
+      margin-top: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      background: #2a67c8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
     @media (max-width: 768px) {
       .user-dropdown { right: -1rem; min-width: 180px; }
     }
@@ -74,6 +151,56 @@
         <li><a href="#order">Place Rental Order</a></li>
         <li><a href="#warehouse-types">Warehouse Types</a></li>
         <li><a href="#services">Services</a></li>
+
+        <% if (user.getRoleId() == 3) { %>
+        <li><a href="warehouse-history">Rental History</a></li>
+        <% } %>
+        <!-- Nút chuông -->
+        <div class="notif-wrapper">
+          <a href="javascript:void(0)" class="notif-bell-btn" onclick="toggleDropdown()" title="Thông báo mới">
+            <i class="fa fa-bell fa-lg"></i>
+            <% if (notifCount > 0) { %>
+            <span class="notif-count"><%= notifCount %></span>
+            <% } %>
+          </a>
+
+          <!-- Dropdown nổi -->
+          <div id="notifDropdown" class="notif-dropdown">
+            <%
+              if (unnotifiedOrders != null && !unnotifiedOrders.isEmpty()) {
+                for (RentalOrder rental : unnotifiedOrders) {
+                  String warehouseName = warehouseDAO.getById(rental.getWarehouseID()).getName();
+            %>
+            <div class="notif-item card mb-3 shadow-sm border-0">
+              <div class="card-body">
+                <h5 class="card-title text-success">✅ Order Approved: <%= warehouseName %></h5>
+                <p class="card-text">
+                  📅 Rental Period:<br/> <%= sdf.format(rental.getStartDate()) %> → <%= sdf.format(rental.getEndDate()) %><br/>
+                  💰 Deposit: <%= String.format("%,.0f", rental.getDeposit()) %> VNĐ<br/>
+                  🧾 Total Price: <%= String.format("%,.0f", rental.getTotalPrice()) %> VNĐ
+                </p>
+              <form action="payos-payment" method="post">
+                <input type="hidden" name="rentalOrderId" value="<%= rental.getRentalOrderID() %>">
+                <input type="hidden" name="deposit" value="<%= rental.getDeposit() %>">
+                <input type="hidden" name="totalPrice" value="<%= rental.getTotalPrice() %>">
+                <input type="hidden" name="startDate" value="<%= rental.getStartDate() %>">
+                <input type="hidden" name="endDate" value="<%= rental.getEndDate() %>">
+                <input type="hidden" name="currentURL" value="userhome">
+                <button type="submit">🔗  Proceed to Payment</button>
+              </form>
+            </div>
+            </div>
+            <%
+              }
+            } else {
+            %>
+            <p>📭 No new notifications</p>
+            <%
+              }
+            %>
+          </div>
+        </div>
+
       </ul>
     </nav>
     <div class="header-actions">
@@ -87,7 +214,9 @@
             <div class="user-email"><%= user.getEmail() %></div>
           </div>
           <ul class="dropdown-menu">
-            <li><a href="#profile" class="dropdown-item">View Profile</a></li>
+            <% if (user.getRoleId() == 3) { %>
+            <li><a href="view-profile" class="dropdown-item">View Profile</a></li>
+            <% } %>
             <li><a href="#change-password" class="dropdown-item">Change Password</a></li>
             <% if (user.getRoleId() == 1) { %>
               <li><a href="admin-dashboard.jsp" class="dropdown-item">Admin Dashboard</a></li>
@@ -96,6 +225,7 @@
           </ul>
         </div>
       </div>
+
     </div>
   </div>
 </header>
@@ -253,7 +383,12 @@
       });
     });
   });
-</script>
 
+  function toggleDropdown() {
+    const dropdown = document.getElementById("notifDropdown");
+    dropdown.style.display = (dropdown.style.display === "none" || dropdown.style.display === "") ? "block" : "none";
+  }
+
+</script>
 </body>
 </html>

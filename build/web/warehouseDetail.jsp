@@ -10,6 +10,8 @@
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap JS (bundle includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
@@ -167,7 +169,7 @@
           <!-- Main Content -->
           <div class="col-lg-8">
             <div class="detail-card">
-              <img src="${warehouse.imageUrl}"
+              <img src="image?id=${warehouse.imageUrl}"
                    class="warehouse-image"
                    alt="${warehouse.name}"
                    onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDQwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjFmNWY5Ii8+CjxwYXRoIGQ9Ik0yMDAgNzBMMTcwIDkwVjE0MEgyMzBWOTBMMjAwIDcwWiIgZmlsbD0iIzJiNTJkZiIvPgo8cGF0aCBkPSJNMTcwIDkwTDE0MCAzMFYxNDBIMTcwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8cGF0aCBkPSJNMjMwIDkwTDI2MCAzMFYxNDBIMjMwVjkwWiIgZmlsbD0iIzM3NjNlMCIvPgo8dGV4dCB4PSIyMDAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1zaXplPSIxNCIgZm9udC1mYW1pbHk9IkFyaWFsIj5XYXJlaG91c2UgSW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='">
@@ -215,7 +217,8 @@
                     <div class="info-text">
                       <div class="info-label">Price per m²</div>
                       <div class="info-value">
-                        <fmt:formatNumber value="${warehouse.pricePerUnit}" type="currency" currencySymbol="VNĐ" groupingUsed="true"/>
+                        <fmt:formatNumber value="${warehouse.pricePerUnit}" type="currency" groupingUsed="true"/>
+                        <span>VNĐ</span>
                       </div>
                     </div>
                   </div>
@@ -258,20 +261,39 @@
                   </a>
 
                   <!-- new Rent button -->
-                  <form action="create-rental-order" method="post">
-                        <input type="hidden" name="warehouseId" value="${warehouse.id}" />
-                        <input type="hidden" name="accountId" value="${sessionScope.user.accountId}" />
-                        <input type="hidden" name="startDate" value="<%= java.time.LocalDate.now() %>" />
-                        <input type="hidden" name="endDate" value="<%= java.time.LocalDate.now().plusMonths(1) %>" />
+                  <form id="rentForm" action="create-rental-order" method="post">
+                    <input type="hidden" name="warehouseId" value="${warehouse.id}" />
+                    <input type="hidden" name="startDate" value="<%= java.time.LocalDate.now() %>" />
+                    <input type="hidden" name="endDate" value="<%= java.time.LocalDate.now().plusMonths(3) %>" />
 
-                        <button type="submit" class="btn-rent">
-                          <i class="bi bi-currency-exchange"></i> Rent Now
-                        </button>
-                 </form>
+                    <input type="hidden" name="currentURL" id="currentURL" />
+
+                    <button type="submit" class="btn-rent">
+                      <i class="bi bi-currency-exchange"></i> Thuê ngay
+                    </button>
+                  </form>
 
                   <a href="#" class="btn-contact">
                     <i class="bi bi-envelope"></i> Contact Owner
                   </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notification Modal -->
+          <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                  <h5 class="modal-title" id="statusModalLabel">Notification</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  The warehouse is not ready for rent. Please choose another warehouse or come back later.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
@@ -342,6 +364,16 @@
           <p style="margin-bottom:0;font-size:0.9rem;"><i class="bi bi-currency-dollar" style="color:#2563eb;"></i> $${warehouse.pricePerUnit}/m²</p>
         </div>
       `);
+      document.getElementById("currentURL").value = window.location.href;
+
+      document.getElementById("rentForm").addEventListener("submit", function (e) {
+        const status = document.getElementById("status").value;
+        if (status.toLowerCase() !== "available") {
+          e.preventDefault();
+          const modal = new bootstrap.Modal(document.getElementById("statusModal"));
+          modal.show();
+        }
+      });
     </script>
   </c:if>
 </body>

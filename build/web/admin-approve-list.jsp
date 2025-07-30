@@ -18,7 +18,7 @@
     }
 
     RentalOrderDAO dao = new RentalOrderDAO();
-    List<RentalOrder> list = dao.getPendingApprovalOrders();
+    List<RentalOrder> list = dao.getPendingOrders();
 %>
 
 <%
@@ -42,7 +42,12 @@
     <h2>Pending Rental Contracts</h2>
     <p>Review and approve customer-submitted rental orders with completed deposits.</p>
   </div>
-
+    <!-- Back Button -->
+    <div class="mb-3">
+        <button class="btn btn-outline-secondary" onclick="history.back()">
+            <i class="bi bi-arrow-left-circle me-1"></i> Back
+        </button>
+    </div>
   <table class="table table-bordered table-hover mt-4 bg-white">
     <thead class="table-dark">
       <tr>
@@ -65,12 +70,12 @@
           <td><%= vndFormat.format(ro.getDeposit()) %></td>
           <td><span class="badge bg-warning text-dark"><%= ro.getStatus() %></span></td>
           <td class="d-flex gap-2">
-              <form method="post" action="admin/approve-rental" onsubmit="return confirm('Are you sure to approve this rental?');">
+              <form method="post" action="admin-approve-rental" onsubmit="return confirm('Are you sure to approve this rental?');">
                 <input type="hidden" name="rentalOrderId" value="<%= ro.getRentalOrderID() %>">
                 <button type="submit" class="btn btn-success btn-sm">Approve</button>
               </form>
 
-              <form method="post" action="admin/reject-rental" onsubmit="return confirm('Are you sure to reject this rental?');">
+              <form method="post" action="admin-reject-rental" onsubmit="return confirm('Are you sure to reject this rental?');">
                 <input type="hidden" name="rentalOrderId" value="<%= ro.getRentalOrderID() %>">
                 <button type="submit" class="btn btn-danger btn-sm">Reject</button>
               </form>
