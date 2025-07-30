@@ -112,8 +112,8 @@ public class VerifyOTPServlet extends HttpServlet {
     // Phương thức gửi email với hợp đồng PDF đính kèm
     private void sendContractEmail(String userEmail, String pdfFilePath, Integer rentalOrderId) throws MessagingException {
         // Sử dụng JavaMail để gửi email với hợp đồng đính kèm
-        String senderEmail = "tienloveu123@gmail.com"; // Email của bạn
-        String senderPassword = "vgfn whay lrck iyfg"; // Mật khẩu ứng dụng Gmail
+        String senderEmail = "tungptde170779@fpt.edu.vn"; // Email của bạn
+        String senderPassword = "gzly jozd ihbj xcdv"; // Mật khẩu ứng dụng Gmail
         String host = "smtp.gmail.com"; // Host cho SMTP Gmail
 
         // Cấu hình thư viện JavaMail
