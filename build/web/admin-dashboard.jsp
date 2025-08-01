@@ -72,7 +72,11 @@
 
         <!-- Payment Confirmation -->
         <div class="col-md-6 col-lg-4">
+<<<<<<< HEAD
             <a href="comingsoon.jsp" class="text-decoration-none">
+=======
+            <a href="admin-payment-list.jsp" class="text-decoration-none">
+>>>>>>> 65f61a6 (rental history)
                 <div class="card card-hover border-0 shadow-sm h-100 text-center p-4">
                     <div class="icon-circle bg-success text-white mb-3 mx-auto">
                         <i class="bi bi-cash-coin fs-3"></i>
@@ -85,7 +89,11 @@
 
         <!-- Contract Approvals -->
         <div class="col-md-6 col-lg-4">
+<<<<<<< HEAD
             <a href="comingsoon.jsp" class="text-decoration-none">
+=======
+            <a href="admin-contracts.jsp" class="text-decoration-none">
+>>>>>>> 65f61a6 (rental history)
                 <div class="card card-hover border-0 shadow-sm h-100 text-center p-4">
                     <div class="icon-circle bg-warning text-white mb-3 mx-auto">
                         <i class="bi bi-file-earmark-text fs-3"></i>
@@ -124,7 +132,11 @@
 
         <!-- Support Tickets -->
         <div class="col-md-6 col-lg-4">
+<<<<<<< HEAD
             <a href="comingsoon.jsp" class="text-decoration-none">
+=======
+            <a href="admin-support.jsp" class="text-decoration-none">
+>>>>>>> 65f61a6 (rental history)
                 <div class="card card-hover border-0 shadow-sm h-100 text-center p-4">
                     <div class="icon-circle bg-secondary text-white mb-3 mx-auto">
                         <i class="bi bi-chat-dots fs-3"></i>

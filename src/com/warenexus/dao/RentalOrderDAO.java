@@ -342,6 +342,79 @@ public class RentalOrderDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    public List<RentalOrder> getApprovedOrdersByAccount(int accountId) throws Exception {
+    String sql = "SELECT * FROM RentalOrder WHERE AccountID = ? AND Status = 'Approved'";
+    List<RentalOrder> list = new ArrayList<>();
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, accountId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            RentalOrder rental = new RentalOrder();
+            rental.setRentalOrderID(rs.getInt("RentalOrderID"));
+            rental.setAccountID(rs.getInt("AccountID"));
+            rental.setWarehouseID(rs.getInt("WarehouseID"));
+            rental.setStartDate(rs.getDate("StartDate"));
+            rental.setEndDate(rs.getDate("EndDate"));
+            rental.setDeposit(rs.getDouble("Deposit"));
+            rental.setTotalPrice(rs.getDouble("TotalPrice"));
+            rental.setStatus(rs.getString("Status"));
+            rental.setCreatedAt(rs.getTimestamp("CreatedAt"));
+            rental.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            list.add(rental);
+        }
+    }
+    return list;
+}
+    
+    public List<RentalOrder> getOngoingOrdersByAccountId(int accountId) throws Exception {
+    List<RentalOrder> list = new ArrayList<>();
+    String sql = "SELECT * FROM RentalOrder WHERE AccountID = ? AND Status = 'Approved'";
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
+        ps.setInt(1, accountId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            RentalOrder ro = new RentalOrder();
+            ro.setRentalOrderID(rs.getInt("RentalOrderID"));
+            ro.setWarehouseID(rs.getInt("WarehouseID"));
+            ro.setAccountID(rs.getInt("AccountID"));
+            ro.setStartDate(rs.getDate("StartDate"));
+            ro.setEndDate(rs.getDate("EndDate"));
+            ro.setStatus(rs.getString("Status"));
+            ro.setDeposit(rs.getDouble("Deposit"));
+            ro.setTotalPrice(rs.getDouble("TotalPrice"));
+            list.add(ro);
+        }
+    }
+    return list;
+}
+    
+    public List<RentalOrder> getAllOrdersByAccount(int accountId) throws Exception {
+    String sql = "SELECT * FROM RentalOrder WHERE AccountID = ?";
+    List<RentalOrder> list = new ArrayList<>();
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, accountId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            RentalOrder rental = new RentalOrder();
+            rental.setRentalOrderID(rs.getInt("RentalOrderID"));
+            rental.setAccountID(rs.getInt("AccountID"));
+            rental.setWarehouseID(rs.getInt("WarehouseID"));
+            rental.setStartDate(rs.getDate("StartDate"));
+            rental.setEndDate(rs.getDate("EndDate"));
+            rental.setDeposit(rs.getDouble("Deposit"));
+            rental.setTotalPrice(rs.getDouble("TotalPrice"));
+            rental.setStatus(rs.getString("Status"));
+            rental.setCreatedAt(rs.getTimestamp("CreatedAt"));
+            rental.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            list.add(rental);
+        }
+    }
+    return list;
+}
 
 }

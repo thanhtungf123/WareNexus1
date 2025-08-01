@@ -156,6 +156,9 @@ public class VerifyOTPServlet extends HttpServlet {
 
     // Phương thức cập nhật trạng thái hợp đồng trong DB
     private void updateContractStatus(Integer rentalOrderId, RentalOrder rentalOrder) throws Exception {
+        // Giả sử bạn có DAO để lưu hợp đồng vào DB
+        rentalOrderDAO.updateStatus(rentalOrderId, "Pending");
+
         // Tạo hợp đồng mới
         Contract contract = new Contract();
         contract.setRentalOrderID(rentalOrderId);

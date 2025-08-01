@@ -131,6 +131,22 @@
         <servlet-name>AdminWarehouseDetailServlet</servlet-name>
         <servlet-class>com.warenexus.controller.AdminWarehouseDetailServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CustomerRentalHistoryServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.CustomerRentalHistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FinalPaymentServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.FinalPaymentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>FinalPaymentReturnServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.FinalPaymentReturnServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RentalOrderDetailServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.RentalOrderDetailServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>WarehouseServlet</servlet-name>
         <url-pattern>/warehouse</url-pattern>
@@ -255,6 +271,22 @@
     <servlet-mapping>
         <servlet-name>AdminWarehouseDetailServlet</servlet-name>
         <url-pattern>/AdminWarehouseDetailServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerRentalHistoryServlet</servlet-name>
+        <url-pattern>/CustomerRentalHistoryServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FinalPaymentServlet</servlet-name>
+        <url-pattern>/FinalPaymentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FinalPaymentReturnServlet</servlet-name>
+        <url-pattern>/FinalPaymentReturnServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RentalOrderDetailServlet</servlet-name>
+        <url-pattern>/RentalOrderDetailServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>warehouse.jsp</welcome-file>

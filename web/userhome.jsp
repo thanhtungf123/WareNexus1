@@ -153,7 +153,7 @@
         <li><a href="#services">Services</a></li>
 
         <% if (user.getRoleId() == 3) { %>
-        <li><a href="warehouse-history">Rental History</a></li>
+        <li><a href="rental-history">Rental History</a></li>
         <% } %>
         <!-- Nút chuông -->
         <div class="notif-wrapper">
