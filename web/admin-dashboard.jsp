@@ -122,18 +122,18 @@
             </a>
         </div>
 
-        <!-- Support Tickets -->
-        <div class="col-md-6 col-lg-4">
-            <a href="comingsoon.jsp" class="text-decoration-none">
-                <div class="card card-hover border-0 shadow-sm h-100 text-center p-4">
-                    <div class="icon-circle bg-secondary text-white mb-3 mx-auto">
-                        <i class="bi bi-chat-dots fs-3"></i>
+        <!-- Manage Rentals -->
+            <div class="col-md-6 col-lg-4">
+                <a href="admin-rental-manage.jsp" class="text-decoration-none">
+                    <div class="card card-hover border-0 shadow-sm h-100 text-center p-4">
+                        <div class="icon-circle bg-secondary text-white mb-3 mx-auto">
+                            <i class="bi bi-box-seam fs-3"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark">Manage Rentals</h5>
+                        <p class="text-muted">Monitor active rentals, send reminders, or cancel overdue ones.</p>
                     </div>
-                    <h5 class="fw-bold text-dark">Support Tickets</h5>
-                    <p class="text-muted">Track and resolve user issues or complaints.</p>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
     </div>
 
 </div>

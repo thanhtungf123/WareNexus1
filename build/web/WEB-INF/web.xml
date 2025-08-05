@@ -147,6 +147,18 @@
         <servlet-name>RentalOrderDetailServlet</servlet-name>
         <servlet-class>com.warenexus.controller.RentalOrderDetailServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AdminCurrentRentalServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.AdminCurrentRentalServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SendReminderServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.SendReminderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CancelRentalServlet</servlet-name>
+        <servlet-class>com.warenexus.controller.CancelRentalServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>WarehouseServlet</servlet-name>
         <url-pattern>/warehouse</url-pattern>
@@ -287,6 +299,18 @@
     <servlet-mapping>
         <servlet-name>RentalOrderDetailServlet</servlet-name>
         <url-pattern>/RentalOrderDetailServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminCurrentRentalServlet</servlet-name>
+        <url-pattern>/AdminCurrentRentalServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SendReminderServlet</servlet-name>
+        <url-pattern>/SendReminderServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CancelRentalServlet</servlet-name>
+        <url-pattern>/CancelRentalServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>warehouse.jsp</welcome-file>
