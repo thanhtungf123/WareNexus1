@@ -419,7 +419,7 @@ public class RentalOrderDAO {
 
      public List<RentalOrder> getAllOngoingOrders() throws Exception {
     List<RentalOrder> list = new ArrayList<>();
-    String sql = "SELECT * FROM RentalOrder WHERE Status = 'Approved' AND GETDATE() BETWEEN StartDate AND EndDate";
+    String sql = "SELECT * FROM RentalOrder WHERE Status = 'Approved'";
     try (Connection conn = DBUtil.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql);
          ResultSet rs = ps.executeQuery()) {
@@ -434,6 +434,30 @@ public class RentalOrderDAO {
             ro.setStatus(rs.getString("Status"));
             ro.setDeposit(rs.getDouble("Deposit"));
             ro.setTotalPrice(rs.getDouble("TotalPrice"));
+            ro.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            list.add(ro);
+        }
+    }
+    return list;
+}
+     
+     public List<RentalOrder> getAllApprovedOrders() throws Exception {
+    String sql = "SELECT * FROM RentalOrder WHERE Status = 'Approved'";
+    List<RentalOrder> list = new ArrayList<>();
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            RentalOrder ro = new RentalOrder();
+            ro.setRentalOrderID(rs.getInt("RentalOrderID"));
+            ro.setAccountID(rs.getInt("AccountID"));
+            ro.setWarehouseID(rs.getInt("WarehouseID"));
+            ro.setStartDate(rs.getDate("StartDate"));
+            ro.setEndDate(rs.getDate("EndDate"));
+            ro.setStatus(rs.getString("Status"));
+            ro.setDeposit(rs.getDouble("Deposit"));
+            ro.setTotalPrice(rs.getDouble("TotalPrice"));
+            ro.setDepositPaid(rs.getBoolean("IsDepositPaid"));
             list.add(ro);
         }
     }

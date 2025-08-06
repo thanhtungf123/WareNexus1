@@ -3,16 +3,28 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/SendReminderServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/PaymentDAO.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/CreateRentalOrderServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/model/WarehouseImage.java</file>
             <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/AdminRentalManageServlet.java</file>
-            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/util/EmailSender.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/CustomerDAO.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/AccountDAO.java</file>
             <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/CancelRentalServlet.java</file>
-            <file>file:/D:/code/SWP/test%202/WareNexus/web/admin-approve-list.jsp</file>
-            <file>file:/D:/code/SWP/test%202/WareNexus/web/admin-warehouse-view.jsp</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/util/EmailSender.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/WarehouseDAO.java</file>
             <file>file:/D:/code/SWP/test%202/WareNexus/web/admin-rental-manage.jsp</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/model/RentalOrder.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/config.properties</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/VerifyOTPServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/model/Customer.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/SendReminderServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/UserDAO.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/util/OTPUtil.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/AdminWarehouseDetailServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/model/Payment.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/model/Warehouse.java</file>
             <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/RentalOrderDAO.java</file>
-            <file>file:/D:/code/SWP/test%202/WareNexus/web/admin-warehouse-detail.jsp</file>
-            <file>file:/D:/code/SWP/test%202/WareNexus/web/admin-dashboard.jsp</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/model/Account.java</file>
         </group>
     </open-files>
 </project-private>
