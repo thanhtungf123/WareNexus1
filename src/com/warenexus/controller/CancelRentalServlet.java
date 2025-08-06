@@ -11,39 +11,39 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/admin/cancel-rental")
+@WebServlet("/cancel-rental")
 public class CancelRentalServlet extends HttpServlet {
 
     private final RentalOrderDAO rentalDAO = new RentalOrderDAO();
     private final CustomerDAO customerDAO = new CustomerDAO();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
+            int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
+
             RentalOrder order = rentalDAO.getRentalOrderById(rentalOrderId);
             if (order == null || !"Approved".equals(order.getStatus())) {
                 req.getSession().setAttribute("error", "Không thể hủy đơn thuê không hợp lệ.");
-                resp.sendRedirect("admin-rental-manage.jsp");
+                resp.sendRedirect("admin-rental-manage");
                 return;
             }
 
             // Cập nhật trạng thái đơn thuê thành "Cancelled"
             rentalDAO.updateStatus(rentalOrderId, "Cancelled");
 
-            // Gửi email thông báo hủy
+            // Gửi email thông báo hủy hợp đồng
             Customer customer = customerDAO.getByAccountId(order.getAccountID());
             if (customer != null) {
                 EmailSender.sendCancelEmail(customer.getEmail());
             }
 
-            req.getSession().setAttribute("message", "Đã hủy đơn thuê thành công.");
-            resp.sendRedirect("admin-rental-manage.jsp");
+            req.getSession().setAttribute("message", "Đã hủy đơn thuê và gửi email thông báo.");
         } catch (Exception e) {
             e.printStackTrace();
-            req.getSession().setAttribute("error", "Có lỗi xảy ra khi hủy đơn.");
-            resp.sendRedirect("admin-rental-manage.jsp");
+            req.getSession().setAttribute("error", "Có lỗi xảy ra khi hủy đơn thuê.");
         }
+        resp.sendRedirect("admin-rental-manage");
     }
 }

@@ -124,7 +124,7 @@
 
         <!-- Manage Rentals -->
             <div class="col-md-6 col-lg-4">
-                <a href="admin-rental-manage.jsp" class="text-decoration-none">
+                <a href="admin-rental-manage" class="text-decoration-none">
                     <div class="card card-hover border-0 shadow-sm h-100 text-center p-4">
                         <div class="icon-circle bg-secondary text-white mb-3 mx-auto">
                             <i class="bi bi-box-seam fs-3"></i>

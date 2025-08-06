@@ -1,101 +1,116 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.*" %>
-<%@ page import="com.warenexus.model.*" %>
+<%@ page import="com.warenexus.model.Account" %>
+
+<%
+    Account user = (Account) session.getAttribute("user");
+    if (user == null || user.getRoleId() != 1) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+%>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - Rental Management</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Quản lý đơn thuê đã duyệt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/style.css"/>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card-title {
+            font-size: 1.25rem;
+        }
+        .badge {
+            font-size: 0.85em;
+            padding: 0.4em 0.6em;
+        }
+        .btn-circle {
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            padding: 6px 0;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+
 <jsp:include page="header.jsp"/>
 
-<div class="container my-5">
-    <h2 class="text-primary mb-4 text-center">Rental Order Management</h2>
+<div class="container mt-4 mb-5">
+    <h2 class="text-center text-primary fw-bold mb-4">📋 Danh sách đơn thuê đã được duyệt</h2>
 
-    <a href="admin-dashboard.jsp" class="btn btn-outline-secondary mb-3">&larr; Back</a>
+    <c:if test="${not empty orders}">
+        <div class="row g-4">
+            <c:forEach var="o" items="${orders}" varStatus="loop">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary fw-bold">${o.warehouseName}</h5>
+                            <p class="mb-1"><i class="bi bi-geo-alt-fill text-danger"></i> ${o.warehouseAddress}</p>
+                            <p class="mb-1"><strong>Khách hàng:</strong> ${o.customerName}</p>
+                            <p class="mb-1"><strong>Email:</strong> ${o.customerEmail}</p>
+                            <p class="mb-1"><strong>Thời gian:</strong> 
+                                <fmt:formatDate value="${o.startDate}" pattern="dd/MM/yyyy"/>
+                                → 
+                                <fmt:formatDate value="${o.endDate}" pattern="dd/MM/yyyy"/>
+                            </p>
+                            <p class="mb-1"><strong>Đặt cọc:</strong> <fmt:formatNumber value="${o.deposit}" type="currency" currencySymbol="₫"/></p>
+                            <p class="mb-1"><strong>Tổng thanh toán:</strong> <fmt:formatNumber value="${o.totalPrice}" type="currency" currencySymbol="₫"/></p>
+                            <p class="mt-2 mb-1">
+                                <span class="badge bg-${o.depositPaid ? 'success' : 'secondary'}">
+                                    ${o.depositPaid ? '✅ Đã đặt cọc' : '❌ Chưa đặt cọc'}
+                                </span>
+                                <span class="badge bg-${o.finalPaid ? 'success' : 'secondary'}">
+                                    ${o.finalPaid ? '✅ Đã thanh toán' : '❌ Chưa thanh toán'}
+                                </span>
+                            </p>
+                            <p class="mb-3">
+                                <c:choose>
+                                    <c:when test="${o.daysUntilEndDate < 0}">
+                                        <span class="badge bg-danger">⏰ Quá hạn ${-o.daysUntilEndDate} ngày</span>
+                                    </c:when>
+                                    <c:when test="${o.daysUntilEndDate <= 14}">
+                                        <span class="badge bg-warning text-dark">⚠️ Còn ${o.daysUntilEndDate} ngày</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="badge bg-info text-dark">🕓 Còn ${o.daysUntilEndDate} ngày</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </p>
+                            <div class="d-flex justify-content-between">
+                                <form action="admin/send-reminder" method="post">
+                                    <input type="hidden" name="id" value="${o.rentalOrderID}" />
+                                    <button type="submit" class="btn btn-outline-warning btn-circle" title="Gửi nhắc nhở">
+                                        <i class="bi bi-envelope-fill"></i>
+                                    </button>
+                                </form>
+                                <form action="cancel-rental" method="post"
+                                      onsubmit="return confirm('Bạn có chắc muốn hủy đơn thuê này?');">
+                                    <input type="hidden" name="rentalOrderId" value="${o.rentalOrderID}" />
+                                    <button type="submit" class="btn btn-outline-danger btn-circle" title="Hủy đơn">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+    </c:if>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle">
-            <thead class="table-primary">
-                <tr>
-                    <th>#</th>
-                    <th>Customer Name</th>
-                    <th>Warehouse ID</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Deposit</th>
-                    <th>Total Price</th>
-                    <th>Final Payment</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:choose>
-                    <c:when test="${empty orders}">
-                        <tr>
-                            <td colspan="10" class="text-center">No ongoing rentals found.</td>
-                        </tr>
-                    </c:when>
-                    <c:otherwise>
-                        <c:forEach var="order" items="${orders}" varStatus="loop">
-                            <tr>
-                                <td>${loop.index + 1}</td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${customers[order.rentalOrderID] != null}">
-                                            ${customers[order.rentalOrderID].fullName}
-                                        </c:when>
-                                        <c:otherwise>
-                                            Unknown
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>${order.warehouseID}</td>
-                                <td>
-                                    <fmt:formatDate value="${order.startDate}" pattern="dd/MM/yyyy"/>
-                                </td>
-                                <td>
-                                    <fmt:formatDate value="${order.endDate}" pattern="dd/MM/yyyy"/>
-                                </td>
-                                <td>
-                                    <fmt:formatNumber value="${order.deposit}" type="currency" currencySymbol="₫"/>
-                                </td>
-                                <td>
-                                    <fmt:formatNumber value="${order.totalPrice}" type="currency" currencySymbol="₫"/>
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${finalPayments[order.rentalOrderID]}">
-                                            ✅ Paid
-                                        </c:when>
-                                        <c:otherwise>
-                                            ❌ Not Yet
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td>
-                                    ${order.status}
-                                </td>
-                                <td>
-                                    <!-- Bạn có thể thêm nút xem chi tiết hoặc hủy đơn -->
-                                    <a href="rental-detail?rentalOrderId=${order.rentalOrderID}" class="btn btn-sm btn-outline-info">View</a>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
-            </tbody>
-        </table>
-    </div>
+    <c:if test="${empty orders}">
+        <div class="alert alert-warning text-center mt-4">
+            <i class="bi bi-exclamation-triangle-fill"></i> Không có đơn thuê nào được duyệt.
+        </div>
+    </c:if>
 </div>
 
 <jsp:include page="footer.jsp"/>
