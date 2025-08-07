@@ -1,9 +1,7 @@
 package com.warenexus.controller;
 
 import com.warenexus.dao.RentalOrderDAO;
-import com.warenexus.dao.CustomerDAO;
-import com.warenexus.model.Customer;
-import com.warenexus.model.RentalOrder;
+import com.warenexus.model.RentalOrderFullInfo;
 import com.warenexus.util.EmailSender;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,42 +9,32 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 
-@WebServlet("/send-reminder")
+@WebServlet("/admin/send-reminder")
 public class SendReminderServlet extends HttpServlet {
-    private final RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
-    private final CustomerDAO customerDAO = new CustomerDAO();
+    private final RentalOrderDAO rentalDAO = new RentalOrderDAO();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         try {
-            int rentalOrderId = Integer.parseInt(req.getParameter("rentalOrderId"));
+            int rentalOrderId = Integer.parseInt(req.getParameter("id"));
 
-            RentalOrder rental = rentalOrderDAO.getRentalOrderById(rentalOrderId);
-            if (rental == null) {
-                req.getSession().setAttribute("error", "Không tìm thấy đơn thuê.");
-                resp.sendRedirect("admin-rental-manage");
-                return;
+            RentalOrderFullInfo info = rentalDAO.getRentalOrderFullInfoById(rentalOrderId);
+            if (info != null && !info.isFinalPaid()) {
+                EmailSender.sendReminderEmail(
+                        info.getCustomerEmail(),
+                        info.getCustomerName(),
+                        info.getWarehouseName(),
+                        info.getDaysUntilFinalPaymentDue()
+                );
+                req.getSession().setAttribute("success", "Đã gửi email nhắc nhở tới khách hàng.");
+            } else {
+                req.getSession().setAttribute("error", "Không tìm thấy đơn thuê hoặc đơn đã thanh toán.");
             }
-
-            Customer customer = customerDAO.getByAccountId(rental.getAccountID());
-            if (customer == null) {
-                req.getSession().setAttribute("error", "Không tìm thấy thông tin khách hàng.");
-                resp.sendRedirect("admin-rental-manage");
-                return;
-            }
-
-            // Gửi email
-            EmailSender.sendReminderEmail(customer.getEmail());
-
-            // Đánh dấu đã gửi nhắc nhở
-            rentalOrderDAO.markNotificationAsSent(rentalOrderId);
-
-            req.getSession().setAttribute("message", "Đã gửi email nhắc nhở thành công.");
         } catch (Exception e) {
             e.printStackTrace();
-            req.getSession().setAttribute("error", "Có lỗi xảy ra khi gửi email.");
+            req.getSession().setAttribute("error", "Lỗi khi gửi email nhắc nhở.");
         }
-        resp.sendRedirect("admin-rental-manage");
+        resp.sendRedirect(req.getContextPath() + "/admin-rental-manage");
     }
 }

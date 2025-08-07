@@ -1,8 +1,13 @@
 package com.warenexus.model;
 
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 public class RentalOrderFullInfo {
+    private int accountID;
+    private int warehouseID;
     private int rentalOrderID;
     private String warehouseName;
     private String warehouseAddress;
@@ -15,8 +20,28 @@ public class RentalOrderFullInfo {
     private boolean depositPaid;
     private boolean finalPaid;
     private int daysUntilEndDate;
+    private int daysUntilFinalPaymentDue;
+    private int imageId;
+    
+       // Getters and Setters
 
-    // Getters and Setters
+    public int getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(int accountID) {
+        this.accountID = accountID;
+    }
+
+    public int getWarehouseID() {
+        return warehouseID;
+    }
+
+    public void setWarehouseID(int warehouseID) {
+        this.warehouseID = warehouseID;
+    }
+   
+
     public int getRentalOrderID() {
         return rentalOrderID;
     }
@@ -112,4 +137,22 @@ public class RentalOrderFullInfo {
     public void setDaysUntilEndDate(int daysUntilEndDate) {
         this.daysUntilEndDate = daysUntilEndDate;
     }
+
+    public int getDaysUntilFinalPaymentDue() {
+        return daysUntilFinalPaymentDue;
+    }
+
+    public void setDaysUntilFinalPaymentDue(int daysUntilFinalPaymentDue) {
+        this.daysUntilFinalPaymentDue = daysUntilFinalPaymentDue;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
+    }
+    
+    
 }

@@ -24,19 +24,20 @@ public class EmailSender {
 
         sendEmail(recipientEmail, subject, content);
     }
-
-    /**
-     * Gửi email nhắc nhở khách thanh toán tiền tổng
+/**
+     * Gửi email nhắc nhở khách thanh toán tiền tổng (tùy chỉnh số ngày + tên kho + khách)
      */
-    public static void sendReminderEmail(String recipientEmail) {
-        String subject = "Nhắc nhở thanh toán tổng tiền thuê kho - WareNexus";
-        String content = "<p>Kính chào quý khách,</p>"
-                + "<p>Đơn thuê kho của quý khách chỉ còn <strong>1 ngày</strong> để hoàn tất việc thanh toán tổng tiền thuê.</p>"
-                + "<p>Vui lòng đăng nhập vào hệ thống WareNexus để thanh toán đúng hạn, tránh việc hủy đơn thuê.</p>"
-                + "<br><p>Trân trọng,<br><strong>WareNexus Team</strong></p>";
+    public static void sendReminderEmail(String recipientEmail, String customerName, String warehouseName, int daysLeft) {
+    String subject = "Nhắc nhở thanh toán tiền thuê kho - WareNexus";
 
-        sendEmail(recipientEmail, subject, content);
-    }
+    String content = "<p>Kính chào <strong>" + customerName + "</strong>,</p>"
+            + "<p>Đơn thuê kho <strong>" + warehouseName + "</strong> của quý khách còn <strong>" + daysLeft + " ngày</strong> để hoàn tất việc thanh toán tổng tiền thuê.</p>"
+            + "<p>Vui lòng đăng nhập vào hệ thống WareNexus để thanh toán đúng hạn nhằm tránh bị hủy đơn thuê.</p>"
+            + "<br><p>Trân trọng,<br><strong>WareNexus Team</strong></p>";
+
+    sendEmail(recipientEmail, subject, content);
+}
+
 
     /**
      * Gửi email thông báo hủy đơn thuê
