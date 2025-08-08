@@ -14,9 +14,11 @@ import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.itextpdf.layout.borders.Border;
+
+import com.warenexus.dao.WarehouseDAO;
 import com.warenexus.model.Customer;
 import com.warenexus.model.RentalOrder;
-
+import com.warenexus.model.Warehouse;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -52,10 +54,19 @@ public class PDFGenerator {
                 .setTextAlignment(TextAlignment.CENTER);
         document.add(title);
         document.add(new Paragraph("\n"));
-
+        
+         String warehouseName = "—";
+        try {
+            WarehouseDAO wdao = new WarehouseDAO();
+            Warehouse wh = wdao.getById(rentalOrder.getWarehouseID());
+            if (wh != null && wh.getName() != null) warehouseName = wh.getName();
+        } catch (Exception ignore) {}
+        document.add(new Paragraph("Tên kho: " + warehouseName).setFont(font)); // ✅ thêm tên kho
+        
         // Thêm nội dung hợp đồng
         document.add(new Paragraph("Ngày ký: " + new SimpleDateFormat("dd/MM/yyyy").format(new Date())).setFont(font));
         document.add(new Paragraph("Mã đơn thuê: " + rentalOrderId).setFont(font));
+        
         // Tính toán thời gian thuê (Rental Period)
         long diffInMillis = rentalOrder.getEndDate().getTime() - rentalOrder.getStartDate().getTime();
         long rentalPeriod = diffInMillis / (1000 * 60 * 60 * 24); // Chuyển đổi từ mili giây sang ngày
@@ -88,19 +99,72 @@ public class PDFGenerator {
         document.add(new Paragraph("Bên B (WareNexus):").setFont(font).setFontSize(12).setBold());
         document.add(new Paragraph("Đại diện hệ thống cho thuê kho").setFont(font));
         document.add(new Paragraph("Website: www.warenexus.com").setFont(font));
-        document.add(new Paragraph("Email: support@warenexus.com").setFont(font));
+        document.add(new Paragraph("Email: tungptde170779@fpt.edu.vn").setFont(font));
 
         document.add(new Paragraph("\n"));
         document.add(lineSeparator);
 
         // Điều khoản thỏa thuận
-        document.add(new Paragraph("Điều Khoản Thỏa Thuận").setFont(font).setFontSize(15));
-        document.add(new Paragraph("Bên A đồng ý thuê kho của Bên B theo nội dung và điều kiện trong đơn thuê đã xác nhận.").setFont(font));
-        document.add(new Paragraph("Giá thuê, thời hạn thuê, diện tích, đặt cọc và các chi phí liên quan đã được hai bên thống nhất.").setFont(font));
-        document.add(new Paragraph("Bên A cam kết thanh toán đúng hạn và sử dụng kho đúng mục đích.").setFont(font));
-        document.add(new Paragraph("Bên B cam kết cung cấp kho đúng chất lượng, hỗ trợ kỹ thuật và an ninh trong suốt thời gian thuê.").setFont(font));
-        document.add(new Paragraph("Hợp đồng có hiệu lực kể từ thời điểm ký và sau khi Bên A hoàn tất thanh toán.").setFont(font));
+        document.add(new Paragraph("CÁC ĐIỀU KHOẢN VÀ THỎA THUẬN").setFont(font).setBold());
+        document.add(new Paragraph("Điều I:").setFont(font).setBold());
+        document.add(new Paragraph("Bên A đồng ý thuê kho của Bên B theo nội dung và điều kiện trong đơn thuê đã xác nhận.")
+                .setFont(font));
 
+        // Điều II
+        document.add(new Paragraph("\nĐiều II: Thời hạn cho thuê kho").setFont(font).setBold());
+        document.add(new Paragraph(" - Thời hạn cho thuê là " + rentalPeriod + " ngày").setFont(font));
+        document.add(new Paragraph((" - Bắt đầu từ ngày " + rentalOrder.getStartDate())
+                + " đến " + rentalOrder.getEndDate()).setFont(font));
+
+        // Điều III
+        document.add(new Paragraph("\nĐiều III: Giá cả và phương thức thanh toán").setFont(font).setBold());
+        document.add(new Paragraph("1. Giá trị hợp đồng: 30% số tiền tổng sẽ là tiền cọc đồng thời cũng là tiền giá trị hợp đồng")
+                .setFont(font));
+        document.add(new Paragraph("                              - Tiền cọc: " + decimalFormat.format(rentalOrder.getDeposit()) + "=" + decimalFormat.format(rentalOrder.getTotalPrice()) + "*" + "20%" + " VND.").setFont(font));
+        document.add(new Paragraph("                              - Tiền tổng: " + decimalFormat.format(rentalOrder.getTotalPrice()) + " VND.").setFont(font));
+        document.add(new Paragraph("2. Phương thức thanh toán: Bên A sẽ thanh toán số tiền tổng còn lại trên hệ thống đã tích hợp PayOS.")
+                .setFont(font));
+
+        // Điều IV
+        document.add(new Paragraph("\nĐiều IV: Trách nhiệm của bên cho thuê kho").setFont(font).setBold());
+        document.add(new Paragraph("1. Tiến hành bàn giao đầy đủ kho, trang thiết bị và các dịch vụ đi kèm (nếu có) cho bên thuê.")
+                .setFont(font));
+        document.add(new Paragraph("2. Cung cấp các giấy tờ có liên đến kho bãi cho thuê cho cơ quan nhà nước giúp bên A khi cần thiết.")
+                .setFont(font));
+        document.add(new Paragraph("3. Đảm bảo quyền sử dụng trọn vẹn của bên thuê đối với diện tích ghi trong hợp đồng.")
+                .setFont(font));
+
+        // Điều V
+        document.add(new Paragraph("\nĐiều V: Trách nhiệm của bên thuê kho").setFont(font).setBold());
+        document.add(new Paragraph("1. Trả tổng tiền thuê theo đúng thời hạn đã quy định ( 14 ngày bắt đầu từ ngày thuê).").setFont(font));
+        document.add(new Paragraph("2. Sử dụng kho theo đúng mục đích").setFont(font));
+        document.add(new Paragraph("3. Chấp hành các quy định về giữ gìn vệ sinh môi trường và các quy định về trật tự an ninh chung.")
+                .setFont(font));
+        document.add(new Paragraph("4. Không được cải tạo sửa chữa kho khi chưa có sự đồng ý của bên cho thuê.")
+                .setFont(font));
+        document.add(new Paragraph("5. Không được chuyển nhượng hợp đồng thuê và cho thuê lại khi không có sự đồng ý của bên cho thuê.")
+                .setFont(font));
+        document.add(new Paragraph("6. Trường hợp chấm dứt hợp đồng trước thời hạn đã thỏa thuận phải báo trước cho bên B ngay ít nhất 30 ngày. "
+                + "Nếu muốn thuê tiếp bên A phải thỏa thuận trước với bên B.").setFont(font));
+
+        // Điều VI
+        document.add(new Paragraph("\nĐiều VI: Hai bên cam kết").setFont(font).setBold());
+        document.add(new Paragraph("1. Thực hiện đúng các điều khoản ghi trong hợp đồng. Trường hợp có tranh chấp hoặc một trong hai bên vi phạm hợp đồng "
+                + "thì cùng nhau bàn bạc thống nhất trên tinh thần đoàn kết. Nếu không thỏa mãn thì yêu cầu cơ quan có thẩm quyền giải quyết.")
+                .setFont(font));
+        document.add(new Paragraph("2. Chấm dứt hợp đồng trong các điều kiện sau:").setFont(font));
+        document.add(new Paragraph("- Hết thời hạn hợp đồng.").setFont(font));
+        document.add(new Paragraph("- Hai bên thỏa thuận chấm dứt hợp đồng trước thời hạn.").setFont(font));
+        document.add(new Paragraph("- Nếu bên A không thanh toán toàn bộ số tiền tổng theo đúng thời hạn quy định thì bên B sẽ chấm dứt hợp đồng thuê, "
+                + "tiền cọc sẽ không được hoàn lại cho bên A.").setFont(font));
+        document.add(new Paragraph("3. Tiền cọc sẽ được hoàn lại khi bên A đã thanh toán đầy đủ và hợp đồng hết hạn thuê.")
+                .setFont(font));
+
+        // Điều VII
+        document.add(new Paragraph("\nĐiều VII: Hiệu lực của hợp đồng").setFont(font).setBold());
+        document.add(new Paragraph("1. Hợp đồng này có hiệu lực kể từ ngày ký cho đến khi hết hạn hợp đồng.").setFont(font));
+        document.add(new Paragraph("2. Hợp đồng được lập thành 02 bản có giá trị như nhau. Bên A sẽ giữ 01 bản, bên B giữ 01 bản.")
+                .setFont(font));
         document.add(new Paragraph("\n"));
 
         // Tạo bảng cho chữ ký bên A và bên B

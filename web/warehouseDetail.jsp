@@ -267,7 +267,8 @@
                     <input type="hidden" name="endDate" value="<%= java.time.LocalDate.now().plusMonths(3) %>" />
 
                     <input type="hidden" name="currentURL" id="currentURL" />
-
+                    
+                    <input type="hidden" id="status" value="${warehouse.status}" />
                     <button type="submit" class="btn-rent">
                       <i class="bi bi-currency-exchange"></i> Thuê ngay
                     </button>
@@ -290,7 +291,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  The warehouse is not ready for rent. Please choose another warehouse or come back later.
+                  Kho hiện chưa sẵn sàng cho thuê. Vui lòng chọn kho khác hoặc quay lại sau.
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
