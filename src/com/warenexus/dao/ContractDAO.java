@@ -37,5 +37,34 @@ public class ContractDAO {
             throw new SQLException("Lỗi khi tạo hợp đồng: " + e.getMessage(), e);
         }
     }
+    
+    /** Return the contract (or null) for a rental order. */
+    public Contract getByRentalOrderId(int rentalOrderId) throws SQLException {
 
+        String sql = "SELECT * FROM Contract WHERE RentalOrderID = ?";
+
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setInt(1, rentalOrderId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    System.out.println("[DEBUG] ContractDAO: orderId " + rentalOrderId + " ➜ no row");
+                    return null;
+                }
+
+                System.out.println("[DEBUG] ContractDAO: orderId " + rentalOrderId + " ➜ FOUND");
+                Contract ct = new Contract();
+                ct.setRentalOrderID(rs.getInt("RentalOrderID"));
+                ct.setContractNumber(rs.getString("ContractNumber"));
+                ct.setPdfPath(rs.getString("PdfPath"));
+                ct.setStatus(rs.getString("Status"));
+                ct.setPrice(rs.getDouble("Price"));
+                ct.setDeposit(rs.getDouble("Deposit"));
+                ct.setRentalPeriod(rs.getInt("RentalPeriod"));
+                return ct;
+            }
+        }
+    }
 }

@@ -140,13 +140,6 @@
                     <span id="depositDisplay" class="form-control bg-light text-primary fw-bold">Select options</span>
                 </div>
             </div>
-            <div class="mb-3 row">
-                <label class="col-sm-3 col-form-label">Total Deposit</label>
-                <div class="col-sm-9">
-                    <span id="depositDisplay" class="form-control bg-light text-primary fw-bold">Select options</span>
-                </div>
-            </div>
-
             <div class="mb-4 row">
                 <label class="col-sm-3 col-form-label">Total Rental Price</label>
                 <div class="col-sm-9">

@@ -1,9 +1,11 @@
 package com.warenexus.controller;
 
+import com.warenexus.dao.ContractDAO;
 import com.warenexus.dao.PaymentDAO;
 import com.warenexus.dao.RentalOrderDAO;
 import com.warenexus.dao.WarehouseDAO;
 import com.warenexus.model.Account;
+import com.warenexus.model.Contract;
 import com.warenexus.model.RentalOrder;
 import com.warenexus.model.Warehouse;
 
@@ -21,6 +23,7 @@ public class CustomerRentalHistoryServlet extends HttpServlet {
     private final RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
     private final PaymentDAO paymentDAO = new PaymentDAO();
     private final WarehouseDAO warehouseDAO = new WarehouseDAO();
+    private final ContractDAO contractDAO    = new ContractDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -45,7 +48,8 @@ public class CustomerRentalHistoryServlet extends HttpServlet {
             Map<Integer, Boolean> isFinalPaidMap = new HashMap<>();
             Map<Integer, Long> daysLeftMap = new HashMap<>();
             Map<Integer, Boolean> isDueSoonMap = new HashMap<>();
-
+            Map<Integer, Contract>  contractMap      = new HashMap<>();  
+            
             LocalDate today = LocalDate.now();
 
             for (RentalOrder order : orders) {
@@ -71,6 +75,10 @@ public class CustomerRentalHistoryServlet extends HttpServlet {
                 // Đánh dấu nếu đơn đó đến hạn thanh toán (≤ 14 ngày và chưa thanh toán)
                 boolean isDueSoon = !isFinalPaid && daysLeft <= 14 && daysLeft >= 0;
                 isDueSoonMap.put(rentalOrderId, isDueSoon);
+                
+                /* contract (may be null) */
+                Contract c = contractDAO.getByRentalOrderId(rentalOrderId);
+                if (c != null) contractMap.put(rentalOrderId, c);
             }
 
             // Gửi dữ liệu đến JSP
@@ -80,7 +88,8 @@ public class CustomerRentalHistoryServlet extends HttpServlet {
             req.setAttribute("isFinalPaidMap", isFinalPaidMap);
             req.setAttribute("daysLeftMap", daysLeftMap);
             req.setAttribute("isDueSoonMap", isDueSoonMap);
-
+            req.setAttribute("contractMap", contractMap); 
+            
             req.getRequestDispatcher("history.jsp").forward(req, resp);
 
         } catch (Exception e) {

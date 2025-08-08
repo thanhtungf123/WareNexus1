@@ -661,13 +661,41 @@ public class RentalOrderDAO {
     return null;
 }
 
-    public boolean deleteRentalOrderById(int rentalOrderId) throws Exception {
-    String sql = "DELETE FROM RentalOrder WHERE RentalOrderID = ?";
-    try (Connection c = DBUtil.getConnection();
-         PreparedStatement ps = c.prepareStatement(sql)) {
-        ps.setInt(1, rentalOrderId);
-        return ps.executeUpdate() > 0;
+    public boolean deleteRentalOrderById(int rentalOrderId) {
+    String delPayments      = "DELETE FROM Payment WHERE RentalOrderID = ?";
+    String delRentalService = "DELETE FROM RentalService WHERE RentalOrderID = ?";
+    String delOrder         = "DELETE FROM RentalOrder WHERE RentalOrderID = ?";
+
+    try (Connection c = DBUtil.getConnection()) {
+        c.setAutoCommit(false);
+        try (PreparedStatement ps1 = c.prepareStatement(delPayments);
+             PreparedStatement ps2 = c.prepareStatement(delRentalService);
+             PreparedStatement ps3 = c.prepareStatement(delOrder)) {
+
+            // 1) Xóa các bản ghi con
+            ps1.setInt(1, rentalOrderId);
+            ps1.executeUpdate();
+
+            ps2.setInt(1, rentalOrderId);
+            ps2.executeUpdate();
+
+            // 2) Xóa đơn thuê
+            ps3.setInt(1, rentalOrderId);
+            int affected = ps3.executeUpdate();
+
+            c.commit();
+            return affected > 0;
+        } catch (Exception e) {
+            c.rollback();
+            throw e;
+        } finally {
+            c.setAutoCommit(true);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
     }
 }
+
 
 }

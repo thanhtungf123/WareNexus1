@@ -3,9 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/code/SWP/test%202/WareNexus/web/signContract.jsp</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/ViewContractServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/util/EmailSender.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/CancelRentalServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/model/Contract.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/web/history.jsp</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/DownloadContractServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/util/PayOSUtil.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/ContractDAO.java</file>
             <file>file:/D:/code/SWP/test%202/WareNexus/web/rentForm.jsp</file>
             <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/util/PDFGenerator.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/controller/CustomerRentalHistoryServlet.java</file>
+            <file>file:/D:/code/SWP/test%202/WareNexus/src/com/warenexus/dao/RentalOrderDAO.java</file>
         </group>
     </open-files>
 </project-private>
