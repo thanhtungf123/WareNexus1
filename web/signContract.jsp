@@ -112,50 +112,50 @@
     <hr>
 
     <h5>Thông Tin Các Bên</h5>
-    <p><strong>Bên A (Khách hàng):</strong></p>
-    <ul>
-        <li>Họ và tên: <%= customer.getFullName() %></li>
-        <li>Email: <%= acc.getEmail() %></li>
-        <li>Số điện thoại: <%= customer.getPhone() %></li>
-    </ul>
-
-    <p><strong>Bên B (Hệ thống WareNexus):</strong></p>
+    <p><strong>Bên A (Hệ thống WareNexus):</strong></p>
     <ul>
         <li>Đại diện hệ thống cho thuê kho</li>
         <li>Website: www.warenexus.com</li>
         <li>Email: tungptde170779@fpt.edu.vn</li>
     </ul>
 
+    <p><strong>Bên B (Khách hàng):</strong></p>
+    <ul>     
+        <li>Họ và tên: <%= customer.getFullName() %></li>
+        <li>Email: <%= acc.getEmail() %></li>
+        <li>Số điện thoại: <%= customer.getPhone() %></li>
+    </ul>
+
     <hr>
 
     <h5 class="mb-3">CÁC ĐIỀU KHOẢN VÀ THỎA THUẬN</h5>
 
-    <p><strong>Điều I:</strong> Bên A đồng ý thuê kho của Bên B theo nội dung và điều kiện trong đơn thuê đã xác nhận.</p>
+    <p><strong>Điều I:</strong> Bên B đồng ý thuê kho của Bên A theo nội dung và điều kiện trong đơn thuê đã xác nhận.</p>
 
     <p><strong>Điều II: Thời hạn cho thuê kho</strong><br/>
        - Thời hạn cho thuê là <%= rentalMonths %> tháng<br/>
     </p>
 
     <p><strong>Điều III: Giá cả và phương thức thanh toán</strong><br/>
-       1. Giá trị hợp đồng: 30% số tiền tổng sẽ là tiền cọc đồng thời cũng là tiền giá trị hợp đồng<br/>
+       1. Giá trị hợp đồng: Giá trị hợp đồng: Tiền đặt cọc <%= formattedDeposit %> VND (tương ứng với 20% giá trị hợp đồng), ngay sau khi hợp đồng này ký kết bên B chuyển tổng tiền thuê kho cho bên A, chậm nhất trong thời gian 14 ngày ( không kể ngày nghỉ), để đảm bảo thực hiện hợp đồng. Số tiền cọc bên A sẽ hoàn trả lại cho bên B sau khi kết thúc hợp đồng. <br/>
        &nbsp;&nbsp;&nbsp;&nbsp;- Tiền cọc: <%= formattedDeposit %> VND.<br/>
        &nbsp;&nbsp;&nbsp;&nbsp;- Tiền tổng: <%= formattedPrice %> VND.<br/>
-       2. Phương thức thanh toán: Bên A sẽ thanh toán số tiền tổng còn lại trên hệ thống đã tích hợp PayOS.
+       2. Phương thức thanh toán: bên B sẽ thanh toán cho bên A tiền thuê nhà 01 lần, sau khi ký kết hợp đồng.
     </p>
 
     <p><strong>Điều IV: Trách nhiệm của bên cho thuê kho</strong><br/>
        1. Tiến hành bàn giao đầy đủ kho, trang thiết bị và các dịch vụ đi kèm (nếu có) cho bên thuê.<br/>
-       2. Cung cấp các giấy tờ có liên đến kho bãi cho thuê cho cơ quan nhà nước giúp bên A khi cần thiết.<br/>
+       2. Cung cấp các giấy tờ có liên đến kho bãi cho thuê cho cơ quan nhà nước giúp bên B khi cần thiết.<br/>
        3. Đảm bảo quyền sử dụng trọn vẹn của bên thuê đối với diện tích ghi trong hợp đồng.
     </p>
 
     <p><strong>Điều V: Trách nhiệm của bên thuê kho</strong><br/>
-       1. Trả tổng tiền thuê theo đúng thời hạn đã quy định (14 ngày bắt đầu từ ngày thuê).<br/>
+       1. Trả tổng tiền thuê kho theo đúng thời hạn đã quy định (14 ngày bắt đầu từ ngày thuê).<br/>
        2. Sử dụng kho theo đúng mục đích.<br/>
        3. Chấp hành các quy định về giữ gìn vệ sinh môi trường và các quy định về trật tự an ninh chung.<br/>
        4. Không được cải tạo sửa chữa kho khi chưa có sự đồng ý của bên cho thuê.<br/>
        5. Không được chuyển nhượng hợp đồng thuê và cho thuê lại khi không có sự đồng ý của bên cho thuê.<br/>
-       6. Trường hợp chấm dứt hợp đồng trước thời hạn đã thỏa thuận phải báo trước cho bên B ngay ít nhất 30 ngày. Nếu muốn thuê tiếp bên A phải thỏa thuận trước với bên B.
+       6. Trường hợp chấm dứt hợp đồng trước thời hạn đã thỏa thuận phải báo trước cho bên A ngay ít nhất 30 ngày. Nếu muốn thuê tiếp bên B phải thỏa thuận trước với bên A.
     </p>
 
     <p><strong>Điều VI: Hai bên cam kết</strong><br/>
@@ -163,8 +163,7 @@
        2. Chấm dứt hợp đồng trong các điều kiện sau:<br/>
        - Hết thời hạn hợp đồng.<br/>
        - Hai bên thỏa thuận chấm dứt hợp đồng trước thời hạn.<br/>
-       - Nếu bên A không thanh toán toàn bộ số tiền tổng theo đúng thời hạn quy định thì bên B sẽ chấm dứt hợp đồng thuê, tiền cọc sẽ không được hoàn lại cho bên A.<br/>
-       3. Tiền cọc sẽ được hoàn lại khi bên A đã thanh toán đầy đủ và hợp đồng hết hạn thuê.
+       - Nếu bên B không thanh toán toàn bộ số tiền tổng theo đúng thời hạn quy định thì bên A sẽ chấm dứt hợp đồng thuê, tiền cọc sẽ không được hoàn lại cho bên B.<br/>
     </p>
 
     <p><strong>Điều VII: Hiệu lực của hợp đồng</strong><br/>
@@ -176,13 +175,13 @@
 
     <div class="row text-center mt-5">
         <div class="col-md-6">
-            <p><strong>Bên A (Khách hàng)</strong></p>
-            <p><%= customer.getFullName() %></p>
+            <p><strong>Bên A (WareNexus)</strong></p>
+            <p>Đại diện hệ thống</p>
             <hr style="width: 60%; margin: 0 auto;">
         </div>
         <div class="col-md-6">
-            <p><strong>Bên B (WareNexus)</strong></p>
-            <p>Đại diện hệ thống</p>
+            <p><strong>Bên B (Khách hàng)</strong></p>
+            <p><%= customer.getFullName() %></p>
             <hr style="width: 60%; margin: 0 auto;">
         </div>
     </div>

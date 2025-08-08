@@ -131,7 +131,7 @@
             <div class="mb-3 row">
                 <label class="col-sm-3 col-form-label">Deposit Percentage</label>
                 <div class="col-sm-9">
-                    <span class="form-control bg-light">30%</span>
+                    <span class="form-control bg-light">20%</span>
                 </div>
             </div>
             <div class="mb-3 row">
@@ -165,7 +165,7 @@
 <jsp:include page="footer.jsp"/>
 
 <script>
-    const DEPOSIT_RATE = 0.30; // cọc cố định 30%
+    const DEPOSIT_RATE = 0.20; // cọc cố định 20%
 
     function addMonthsToDate(startDate, months) {
         const date = new Date(startDate);
