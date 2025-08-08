@@ -117,6 +117,24 @@
                                         <button type="submit" class="btn btn-primary btn-sm">Pay Now</button>
                                     </form>
                                 </c:if>
+                                <!-- Contract buttons -->
+                                <c:choose>
+                                    <%-- File present on server --%>
+                                    <c:when test="${contractMap[order.rentalOrderID] != null}">
+                                        <a class="btn btn-outline-primary btn-sm mb-1"
+                                           href="view-contract?orderId=${order.rentalOrderID}" target="_blank">View&nbsp;PDF</a>
+                                        <a class="btn btn-outline-success btn-sm mb-1"
+                                           href="download-contract-email?orderId=${order.rentalOrderID}">Download</a>
+                                    </c:when>
+
+                                    <%-- File missing – offer re-mail --%>
+                                    <c:otherwise>
+                                        <a class="btn btn-outline-warning btn-sm mb-1"
+                                           href="download-contract-email?orderId=${order.rentalOrderID}">
+                                           Email&nbsp;me&nbsp;PDF
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                     </c:forEach>

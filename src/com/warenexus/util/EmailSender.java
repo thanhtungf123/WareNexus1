@@ -1,8 +1,12 @@
 package com.warenexus.util;
 
+import java.io.File;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 
 public class EmailSender {
 
@@ -50,6 +54,56 @@ public class EmailSender {
                 + "<br><p>Trân trọng,<br><strong>WareNexus Team</strong></p>";
 
         sendEmail(recipientEmail, subject, content);
+    }
+    
+    // ⭐ NEW: send the contract PDF as an attachment
+    public static void sendContractPDF(String recipientEmail, File pdf, int rentalOrderId) {
+        if (!pdf.exists()) throw new IllegalArgumentException("PDF not found: " + pdf);
+
+        String subject = "Hợp đồng thuê kho #" + rentalOrderId + " – WareNexus";
+        String html = "<p>Chào bạn,</p>"
+                + "<p>Hợp đồng thuê kho của bạn đính kèm bên dưới.</p>"
+                + "<p>Trân trọng,<br><b>WareNexus Team</b></p>";
+
+        try {
+            Session session = getSession();          // ← uses helper just below
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(senderEmail, "WareNexus"));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            msg.setSubject(subject);
+
+            MimeBodyPart htmlPart = new MimeBodyPart();
+            htmlPart.setContent(html, "text/html; charset=UTF-8");
+
+            MimeBodyPart attach = new MimeBodyPart();
+            DataSource src = new FileDataSource(pdf);
+            attach.setDataHandler(new DataHandler(src));
+            attach.setFileName("contract_" + rentalOrderId + ".pdf");
+
+            Multipart mp = new MimeMultipart();
+            mp.addBodyPart(htmlPart);
+            mp.addBodyPart(attach);
+
+            msg.setContent(mp);
+            Transport.send(msg);
+            System.out.println("✅ Contract PDF mailed to " + recipientEmail);
+        } catch (Exception e) {
+            System.err.println("❌ Failed to mail contract PDF to " + recipientEmail + ": " + e.getMessage());
+            throw new RuntimeException("Email sending failed", e);
+        }
+    }
+      // internal helper reused by several mail methods
+    private static Session getSession() {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", port);
+        return Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(senderEmail, senderPassword);
+            }
+        });
     }
 
     /**

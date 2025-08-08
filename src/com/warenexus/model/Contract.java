@@ -6,8 +6,8 @@ public class Contract {
     private String contractNumber;
     private String pdfPath;
     private String status;
-    private double price; // Giá tiền thuê
-    private double deposit; // Tiền đặt cọc
+    private double price; 
+    private double deposit;
     private int rentalPeriod; // Thời gian thuê (tính bằng tháng)
 
     // Getters & Setters
