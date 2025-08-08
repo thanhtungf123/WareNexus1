@@ -2,6 +2,7 @@ package com.warenexus.dao;
 
 import com.warenexus.model.Warehouse;
 import com.warenexus.model.WarehouseImage;
+import com.warenexus.util.DBUtil;
 
 import java.sql.*;
 import java.util.*;
@@ -286,5 +287,14 @@ public class WarehouseDAO {
             return st.executeUpdate() > 0;
         }
     }
+    
+    public boolean markWarehouseAsAvailable(int warehouseId) throws Exception {
+    String sql = "UPDATE Warehouse SET Status = 'Available' WHERE WarehouseID = ?";
+    try (Connection c = DBUtil.getConnection();
+         PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, warehouseId);
+        return ps.executeUpdate() > 0;
+    }
+}
 
 }

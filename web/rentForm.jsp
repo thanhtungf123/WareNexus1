@@ -131,11 +131,13 @@
             <div class="mb-3 row">
                 <label class="col-sm-3 col-form-label">Deposit Percentage</label>
                 <div class="col-sm-9">
-                    <select id="percent" class="form-select" onchange="calculateAll()" required>
-                        <option value="30">30%</option>
-                        <option value="50">50%</option>
-                        <option value="70">70%</option>
-                    </select>
+                    <span class="form-control bg-light">20%</span>
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Total Deposit</label>
+                <div class="col-sm-9">
+                    <span id="depositDisplay" class="form-control bg-light text-primary fw-bold">Select options</span>
                 </div>
             </div>
             <div class="mb-3 row">
@@ -163,15 +165,13 @@
 <jsp:include page="footer.jsp"/>
 
 <script>
+    const DEPOSIT_RATE = 0.20; // cọc cố định 20%
+
     function addMonthsToDate(startDate, months) {
         const date = new Date(startDate);
         const originalDay = date.getDate();
-
         date.setMonth(date.getMonth() + months);
-
-        if (date.getDate() < originalDay) {
-            date.setDate(0); // về cuối tháng trước nếu bị lỗi do ngày không tồn tại
-        }
+        if (date.getDate() < originalDay) date.setDate(0);
         return date;
     }
 
@@ -179,13 +179,12 @@
         const price = <%= wh.getPricePerUnit() %>;
         const size = <%= wh.getSize() %>;
         const months = parseInt(document.getElementById("months").value);
-        const percent = parseFloat(document.getElementById("percent").value);
         const startDateStr = document.getElementById("startDateInput").value;
 
-        // Tính phí thuê kho
+        // Base rental fee
         const baseTotal = price * size * months;
 
-        // Tính phí dịch vụ bổ sung
+        // Extra services
         let serviceTotal = 0;
         <% for (ServiceFee sf : serviceFees) { %>
         if (document.getElementById("<%= sf.getServiceCode() %>").checked) {
@@ -194,21 +193,20 @@
         <% } %>
 
         const total = baseTotal + serviceTotal;
-        const deposit = total * (percent / 100);
+        const deposit = total * DEPOSIT_RATE;
 
-        // Hiển thị
+        // Display
         document.getElementById("depositDisplay").innerText = deposit.toLocaleString('vi-VN') + " VNĐ";
         document.getElementById("totalDisplay").innerText = total.toLocaleString('vi-VN') + " VNĐ";
 
-        // Gán vào hidden input
+        // Hidden inputs (gửi lên server)
         document.getElementById("depositHidden").value = Math.round(deposit);
         document.getElementById("totalPriceHidden").value = Math.round(total);
 
-        // Tính ngày kết thúc
+        // Dates
         if (startDateStr) {
             const endDate = addMonthsToDate(startDateStr, months);
             const endDateFormatted = endDate.toISOString().split('T')[0];
-
             document.getElementById("endDateDisplay").value = endDateFormatted;
             document.getElementById("startDateHidden").value = startDateStr;
             document.getElementById("endDateHidden").value = endDateFormatted;
@@ -224,6 +222,7 @@
         calculateAll();
     };
 </script>
+
 
 </body>
 </html>

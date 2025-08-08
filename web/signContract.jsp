@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.warenexus.model.*, com.warenexus.dao.*, java.text.SimpleDateFormat, java.util.Date, java.text.NumberFormat, java.util.Locale" %>
+<%@ page import="com.warenexus.model.*, com.warenexus.dao.*, java.text.SimpleDateFormat, java.util.Date, java.text.DecimalFormat" %>
 <%
     Account acc = (Account) session.getAttribute("acc");
     if (acc == null) {
@@ -19,19 +19,34 @@
     RentalOrderDAO rentalOrderDAO = new RentalOrderDAO();
     RentalOrder rentalOrder = rentalOrderDAO.getRentalOrderById(rentalOrderId);
 
+    // Lấy tên kho theo warehouseID (đồng bộ với PDFGenerator)
+    WarehouseDAO wdao = new WarehouseDAO();
+    Warehouse wh = wdao.getById(rentalOrder.getWarehouseID());
+    String warehouseName = (wh != null && wh.getName() != null) ? wh.getName() : "—";
+
     String today = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+    SimpleDateFormat ddf = new SimpleDateFormat("dd/MM/yyyy");
+    String startStr = ddf.format(rentalOrder.getStartDate());
+    String endStr   = ddf.format(rentalOrder.getEndDate());
 
-    // Định dạng giá tiền
-    NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-    String formattedPrice = currencyFormat.format(rentalOrder.getTotalPrice());
-    String formattedDeposit = currencyFormat.format(rentalOrder.getDeposit());
+    // Định dạng tiền giống PDF
+    DecimalFormat moneyFmt = new DecimalFormat("#,###,###");
+    String formattedPrice   = moneyFmt.format(rentalOrder.getTotalPrice() != null ? rentalOrder.getTotalPrice() : 0d);
+    String formattedDeposit = moneyFmt.format(rentalOrder.getDeposit()     != null ? rentalOrder.getDeposit()     : 0d);
 
-    // Tính số tháng giữa StartDate và EndDate
-    long startTime = rentalOrder.getStartDate().getTime();
-    long endTime = rentalOrder.getEndDate().getTime();
-    long diff = endTime - startTime;
-    long days = diff / (1000 * 60 * 60 * 24);
-    long months = days / 30; // Giả sử 1 tháng có 30 ngày
+    // Tính số tháng chính xác bằng java.time.Period
+    java.time.ZoneId zone = java.time.ZoneId.systemDefault();
+
+    java.time.LocalDate start = java.time.Instant.ofEpochMilli(rentalOrder.getStartDate().getTime())
+            .atZone(zone).toLocalDate();
+
+    java.time.LocalDate end = java.time.Instant.ofEpochMilli(rentalOrder.getEndDate().getTime())
+            .atZone(zone).toLocalDate();
+
+    java.time.Period period = java.time.Period.between(start, end);
+    int rentalMonths = period.getYears() * 12 + period.getMonths();
+
+
 %>
 <!DOCTYPE html>
 <html>
@@ -40,69 +55,16 @@
     <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f7f9fc;
-        }
-
-        .card {
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background-color: #0056b3;
-            color: white;
-            border-radius: 12px 12px 0 0;
-        }
-
-        .card-body {
-            background-color: white;
-            padding: 30px;
-            border-radius: 0 0 12px 12px;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-            font-size: 14px;
-            padding: 8px 16px;
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
-        }
-
-        .signature-box {
-            border: 2px solid #ccc;
-            width: 100%;
-            height: 200px;
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .signature-box canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 8px;
-        }
-
-        .btn-clear {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            font-size: 14px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .btn-clear:hover {
-            background-color: #d32f2f;
-        }
+        body { font-family: 'Poppins', sans-serif; background-color: #f7f9fc; }
+        .card { border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
+        .card-header { background-color: #0056b3; color: white; border-radius: 12px 12px 0 0; }
+        .card-body { background-color: white; padding: 30px; border-radius: 0 0 12px 12px; }
+        .btn-primary { background-color: #007bff; border-color: #007bff; font-size: 14px; padding: 8px 16px; width: 100%; border-radius: 8px; }
+        .btn-primary:hover { background-color: #0056b3; border-color: #0056b3; }
+        .signature-box { border: 2px solid #ccc; width: 100%; height: 200px; margin-top: 20px; position: relative; }
+        .signature-box canvas { width: 100%; height: 100%; border-radius: 8px; }
+        .btn-clear { background-color: #f44336; color: white; border: none; font-size: 14px; padding: 8px 16px; border-radius: 8px; margin-bottom: 10px; }
+        .btn-clear:hover { background-color: #d32f2f; }
     </style>
 </head>
 <body>
@@ -120,7 +82,7 @@
         <li><a href="userhome#order" class="text-decoration-none text-dark">Đơn thuê</a></li>
         <li><a href="userhome#services" class="text-decoration-none text-dark">Dịch vụ</a></li>
       </ul>
-    </nav>
+     </nav>
     <div class="user-account position-relative">
       <div class="user-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
            id="userAvatar" style="width: 40px; height: 40px; cursor: pointer;">
@@ -143,48 +105,83 @@
 
     <p><strong>Ngày ký:</strong> <%= today %></p>
     <p><strong>Mã đơn thuê:</strong> <%= rentalOrderId %></p>
+    <p><strong>Tên kho:</strong> <%= warehouseName %></p>
     <p><strong>Giá thuê:</strong> <%= formattedPrice %> VND</p>
     <p><strong>Tiền đặt cọc:</strong> <%= formattedDeposit %> VND</p>
-    <p><strong>Thời gian thuê:</strong> <%= months %> tháng</p>
+    <p><strong>Thời gian thuê:</strong> <%= rentalMonths %> tháng</p>
     <hr>
 
     <h5>Thông Tin Các Bên</h5>
-    <p><strong>Bên A (Khách hàng):</strong></p>
+    <p><strong>Bên A (Hệ thống WareNexus):</strong></p>
     <ul>
+        <li>Đại diện hệ thống cho thuê kho</li>
+        <li>Website: www.warenexus.com</li>
+        <li>Email: tungptde170779@fpt.edu.vn</li>
+    </ul>
+
+    <p><strong>Bên B (Khách hàng):</strong></p>
+    <ul>     
         <li>Họ và tên: <%= customer.getFullName() %></li>
         <li>Email: <%= acc.getEmail() %></li>
         <li>Số điện thoại: <%= customer.getPhone() %></li>
     </ul>
 
-    <p><strong>Bên B (Hệ thống WareNexus):</strong></p>
-    <ul>
-        <li>Đại diện hệ thống cho thuê kho</li>
-        <li>Website: www.warenexus.com</li>
-        <li>Email: support@warenexus.com</li>
-    </ul>
-
     <hr>
 
-    <h5>Điều Khoản Thỏa Thuận</h5>
-    <ul>
-        <li>Bên A đồng ý thuê kho của Bên B theo nội dung và điều kiện trong đơn thuê đã xác nhận.</li>
-        <li>Giá thuê, thời hạn thuê, diện tích, đặt cọc và các chi phí liên quan đã được hai bên thống nhất.</li>
-        <li>Bên A cam kết thanh toán đúng hạn và sử dụng kho đúng mục đích.</li>
-        <li>Bên B cam kết cung cấp kho đúng chất lượng, hỗ trợ kỹ thuật và an ninh trong suốt thời gian thuê.</li>
-        <li>Hợp đồng có hiệu lực kể từ thời điểm ký và sau khi Bên A hoàn tất thanh toán.</li>
-    </ul>
+    <h5 class="mb-3">CÁC ĐIỀU KHOẢN VÀ THỎA THUẬN</h5>
+
+    <p><strong>Điều I:</strong> Bên B đồng ý thuê kho của Bên A theo nội dung và điều kiện trong đơn thuê đã xác nhận.</p>
+
+    <p><strong>Điều II: Thời hạn cho thuê kho</strong><br/>
+       - Thời hạn cho thuê là <%= rentalMonths %> tháng<br/>
+    </p>
+
+    <p><strong>Điều III: Giá cả và phương thức thanh toán</strong><br/>
+       1. Giá trị hợp đồng: Giá trị hợp đồng: Tiền đặt cọc <%= formattedDeposit %> VND (tương ứng với 20% giá trị hợp đồng), ngay sau khi hợp đồng này ký kết bên B chuyển tổng tiền thuê kho cho bên A, chậm nhất trong thời gian 14 ngày ( không kể ngày nghỉ), để đảm bảo thực hiện hợp đồng. Số tiền cọc bên A sẽ hoàn trả lại cho bên B sau khi kết thúc hợp đồng. <br/>
+       &nbsp;&nbsp;&nbsp;&nbsp;- Tiền cọc: <%= formattedDeposit %> VND.<br/>
+       &nbsp;&nbsp;&nbsp;&nbsp;- Tiền tổng: <%= formattedPrice %> VND.<br/>
+       2. Phương thức thanh toán: bên B sẽ thanh toán cho bên A tiền thuê nhà 01 lần, sau khi ký kết hợp đồng.
+    </p>
+
+    <p><strong>Điều IV: Trách nhiệm của bên cho thuê kho</strong><br/>
+       1. Tiến hành bàn giao đầy đủ kho, trang thiết bị và các dịch vụ đi kèm (nếu có) cho bên thuê.<br/>
+       2. Cung cấp các giấy tờ có liên đến kho bãi cho thuê cho cơ quan nhà nước giúp bên B khi cần thiết.<br/>
+       3. Đảm bảo quyền sử dụng trọn vẹn của bên thuê đối với diện tích ghi trong hợp đồng.
+    </p>
+
+    <p><strong>Điều V: Trách nhiệm của bên thuê kho</strong><br/>
+       1. Trả tổng tiền thuê kho theo đúng thời hạn đã quy định (14 ngày bắt đầu từ ngày thuê).<br/>
+       2. Sử dụng kho theo đúng mục đích.<br/>
+       3. Chấp hành các quy định về giữ gìn vệ sinh môi trường và các quy định về trật tự an ninh chung.<br/>
+       4. Không được cải tạo sửa chữa kho khi chưa có sự đồng ý của bên cho thuê.<br/>
+       5. Không được chuyển nhượng hợp đồng thuê và cho thuê lại khi không có sự đồng ý của bên cho thuê.<br/>
+       6. Trường hợp chấm dứt hợp đồng trước thời hạn đã thỏa thuận phải báo trước cho bên A ngay ít nhất 30 ngày. Nếu muốn thuê tiếp bên B phải thỏa thuận trước với bên A.
+    </p>
+
+    <p><strong>Điều VI: Hai bên cam kết</strong><br/>
+       1. Thực hiện đúng các điều khoản ghi trong hợp đồng. Trường hợp có tranh chấp hoặc một trong hai bên vi phạm hợp đồng thì cùng nhau bàn bạc thống nhất trên tinh thần đoàn kết. Nếu không thỏa mãn thì yêu cầu cơ quan có thẩm quyền giải quyết.<br/>
+       2. Chấm dứt hợp đồng trong các điều kiện sau:<br/>
+       - Hết thời hạn hợp đồng.<br/>
+       - Hai bên thỏa thuận chấm dứt hợp đồng trước thời hạn.<br/>
+       - Nếu bên B không thanh toán toàn bộ số tiền tổng theo đúng thời hạn quy định thì bên A sẽ chấm dứt hợp đồng thuê, tiền cọc sẽ không được hoàn lại cho bên B.<br/>
+    </p>
+
+    <p><strong>Điều VII: Hiệu lực của hợp đồng</strong><br/>
+       1. Hợp đồng này có hiệu lực kể từ ngày ký cho đến khi hết hạn hợp đồng.<br/>
+       2. Hợp đồng được lập thành 02 bản có giá trị như nhau. Bên A sẽ giữ 01 bản, bên B giữ 01 bản.
+    </p>
 
     <hr>
 
     <div class="row text-center mt-5">
         <div class="col-md-6">
-            <p><strong>Bên A (Khách hàng)</strong></p>
-            <p><%= customer.getFullName() %></p>
+            <p><strong>Bên A (WareNexus)</strong></p>
+            <p>Đại diện hệ thống</p>
             <hr style="width: 60%; margin: 0 auto;">
         </div>
         <div class="col-md-6">
-            <p><strong>Bên B (WareNexus)</strong></p>
-            <p>Đại diện hệ thống</p>
+            <p><strong>Bên B (Khách hàng)</strong></p>
+            <p><%= customer.getFullName() %></p>
             <hr style="width: 60%; margin: 0 auto;">
         </div>
     </div>

@@ -1,9 +1,12 @@
 package com.warenexus.dao;
 
 import com.warenexus.model.RentalOrder;
+import com.warenexus.model.RentalOrderFullInfo;
 import com.warenexus.util.DBUtil;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -342,6 +345,329 @@ public class RentalOrderDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    public List<RentalOrder> getApprovedOrdersByAccount(int accountId) throws Exception {
+    String sql = "SELECT * FROM RentalOrder WHERE AccountID = ? AND Status = 'Approved'";
+    List<RentalOrder> list = new ArrayList<>();
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, accountId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            RentalOrder rental = new RentalOrder();
+            rental.setRentalOrderID(rs.getInt("RentalOrderID"));
+            rental.setAccountID(rs.getInt("AccountID"));
+            rental.setWarehouseID(rs.getInt("WarehouseID"));
+            rental.setStartDate(rs.getDate("StartDate"));
+            rental.setEndDate(rs.getDate("EndDate"));
+            rental.setDeposit(rs.getDouble("Deposit"));
+            rental.setTotalPrice(rs.getDouble("TotalPrice"));
+            rental.setStatus(rs.getString("Status"));
+            rental.setCreatedAt(rs.getTimestamp("CreatedAt"));
+            rental.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            list.add(rental);
+        }
+    }
+    return list;
+}
+    
+    public List<RentalOrder> getOngoingOrdersByAccountId(int accountId) throws Exception {
+    List<RentalOrder> list = new ArrayList<>();
+    String sql = "SELECT * FROM RentalOrder WHERE AccountID = ? AND Status = 'Approved'";
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
 
+        ps.setInt(1, accountId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            RentalOrder ro = new RentalOrder();
+            ro.setRentalOrderID(rs.getInt("RentalOrderID"));
+            ro.setWarehouseID(rs.getInt("WarehouseID"));
+            ro.setAccountID(rs.getInt("AccountID"));
+            ro.setStartDate(rs.getDate("StartDate"));
+            ro.setEndDate(rs.getDate("EndDate"));
+            ro.setStatus(rs.getString("Status"));
+            ro.setDeposit(rs.getDouble("Deposit"));
+            ro.setTotalPrice(rs.getDouble("TotalPrice"));
+            list.add(ro);
+        }
+    }
+    return list;
+}
+    
+    public List<RentalOrder> getAllOrdersByAccount(int accountId) throws Exception {
+    String sql = "SELECT * FROM RentalOrder WHERE AccountID = ?";
+    List<RentalOrder> list = new ArrayList<>();
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, accountId);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            RentalOrder rental = new RentalOrder();
+            rental.setRentalOrderID(rs.getInt("RentalOrderID"));
+            rental.setAccountID(rs.getInt("AccountID"));
+            rental.setWarehouseID(rs.getInt("WarehouseID"));
+            rental.setStartDate(rs.getDate("StartDate"));
+            rental.setEndDate(rs.getDate("EndDate"));
+            rental.setDeposit(rs.getDouble("Deposit"));
+            rental.setTotalPrice(rs.getDouble("TotalPrice"));
+            rental.setStatus(rs.getString("Status"));
+            rental.setCreatedAt(rs.getTimestamp("CreatedAt"));
+            rental.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            list.add(rental);
+        }
+    }
+    return list;
+}
+
+     public List<RentalOrder> getAllOngoingOrders() throws Exception {
+    List<RentalOrder> list = new ArrayList<>();
+    String sql = """
+        SELECT * FROM RentalOrder
+        WHERE Status = 'Approved'
+        AND StartDate <= GETDATE()
+        AND EndDate >= GETDATE()
+    """;
+
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            RentalOrder ro = new RentalOrder();
+            ro.setRentalOrderID(rs.getInt("RentalOrderID"));
+            ro.setAccountID(rs.getInt("AccountID"));
+            ro.setWarehouseID(rs.getInt("WarehouseID"));
+            ro.setStartDate(rs.getDate("StartDate"));
+            ro.setEndDate(rs.getDate("EndDate"));
+            ro.setStatus(rs.getString("Status"));
+            ro.setDeposit(rs.getDouble("Deposit"));
+            ro.setTotalPrice(rs.getDouble("TotalPrice"));
+            ro.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            list.add(ro);
+        }
+    }
+
+    return list;
+}
+     
+     // Lấy tất cả đơn có Status = 'Approved' (dù đang còn hạn hay đã hết hạn)
+    public List<RentalOrder> getAllApprovedOrders() throws Exception {
+        List<RentalOrder> list = new ArrayList<>();
+        String sql = "SELECT * FROM RentalOrder WHERE Status = 'Approved'";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                RentalOrder ro = new RentalOrder();
+                ro.setRentalOrderID(rs.getInt("RentalOrderID"));
+                ro.setAccountID(rs.getInt("AccountID"));
+                ro.setWarehouseID(rs.getInt("WarehouseID"));
+                ro.setStartDate(rs.getDate("StartDate"));
+                ro.setEndDate(rs.getDate("EndDate"));
+                ro.setStatus(rs.getString("Status"));
+                ro.setDeposit(rs.getDouble("Deposit"));
+                ro.setTotalPrice(rs.getDouble("TotalPrice"));
+                ro.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+                list.add(ro);
+            }
+        }
+        return list;
+}
+
+   
+     public int getDaysUntilEndDate(int rentalOrderId) throws Exception {
+    String sql = "SELECT DATEDIFF(DAY, GETDATE(), EndDate) AS DaysLeft FROM RentalOrder WHERE RentalOrderID = ?";
+    try (Connection c = DBUtil.getConnection();
+         PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, rentalOrderId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("DaysLeft");
+        }
+    }
+    return -1; // Nếu không tìm thấy đơn
+}
+     
+     public boolean cancelRentalOrder(int rentalOrderId) throws Exception {
+    String sql = "UPDATE RentalOrder SET Status = 'Cancelled', UpdatedAt = GETDATE() WHERE RentalOrderID = ?";
+    try (Connection c = DBUtil.getConnection();
+         PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, rentalOrderId);
+        return ps.executeUpdate() > 0;
+    }
+}
+
+     public List<RentalOrder> getAllApprovedOrdersWithDates() throws Exception {
+    List<RentalOrder> list = new ArrayList<>();
+    String sql = "SELECT * FROM RentalOrder WHERE Status = 'Approved' AND StartDate IS NOT NULL AND EndDate IS NOT NULL";
+    try (Connection conn = DBUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            RentalOrder ro = new RentalOrder();
+            ro.setRentalOrderID(rs.getInt("RentalOrderID"));
+            ro.setAccountID(rs.getInt("AccountID"));
+            ro.setWarehouseID(rs.getInt("WarehouseID"));
+            ro.setStartDate(rs.getDate("StartDate"));
+            ro.setEndDate(rs.getDate("EndDate"));
+            ro.setDeposit(rs.getDouble("Deposit"));
+            ro.setTotalPrice(rs.getDouble("TotalPrice"));
+            ro.setStatus(rs.getString("Status"));
+            ro.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            list.add(ro);
+        }
+    }
+    return list;
+}
+     
+    public List<RentalOrderFullInfo> getAllApprovedRentalOrdersFullInfo() throws Exception {
+    List<RentalOrderFullInfo> list = new ArrayList<>();
+
+    String sql = """
+        SELECT r.RentalOrderID, r.AccountID, r.WarehouseID, r.StartDate, r.EndDate,
+               r.Deposit, r.TotalPrice, r.IsDepositPaid,
+               w.Name AS WarehouseName, 
+               (w.AddressLine + ', ' + w.Ward + ', ' + w.District) AS warehouseAddress,
+               c.FullName AS CustomerName, c.Email AS CustomerEmail,
+               wi.ImageID AS ImageID,
+               CASE 
+                   WHEN EXISTS (
+                       SELECT 1 
+                       FROM Payment p 
+                       JOIN PaymentCategory pc ON p.PaymentCategoryID = pc.PaymentCategoryID
+                       WHERE p.RentalOrderID = r.RentalOrderID 
+                         AND pc.CategoryName = 'FinalPayment' 
+                         AND p.Status = 'Completed'
+                   ) THEN 1
+                   ELSE 0
+               END AS IsFinalPaid
+        FROM RentalOrder r
+        JOIN Warehouse w ON r.WarehouseID = w.WarehouseID
+        JOIN Account a ON r.AccountID = a.AccountID
+        JOIN Customer c ON a.AccountID = c.AccountID
+        LEFT JOIN (
+            SELECT WarehouseID, MIN(ImageID) AS ImageID
+            FROM WarehouseImage
+            GROUP BY WarehouseID
+        ) wi ON r.WarehouseID = wi.WarehouseID
+        WHERE r.Status = 'Approved'
+        ORDER BY r.StartDate DESC
+    """;
+
+    try (Connection con = DBUtil.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+            RentalOrderFullInfo info = new RentalOrderFullInfo();
+
+            // Basic fields
+            info.setRentalOrderID(rs.getInt("RentalOrderID"));
+            info.setAccountID(rs.getInt("AccountId"));
+            info.setWarehouseID(rs.getInt("WarehouseID"));
+            info.setStartDate(rs.getDate("StartDate"));
+            info.setEndDate(rs.getDate("EndDate"));
+            info.setDeposit(rs.getDouble("Deposit"));
+            info.setTotalPrice(rs.getDouble("TotalPrice"));
+            info.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+            info.setFinalPaid(rs.getBoolean("IsFinalPaid"));
+            info.setWarehouseAddress(rs.getString("warehouseAddress"));
+            info.setImageId(rs.getInt("ImageID"));
+
+            // Extra fields
+            info.setWarehouseName(rs.getString("WarehouseName"));
+            info.setCustomerName(rs.getString("CustomerName"));
+            info.setCustomerEmail(rs.getString("CustomerEmail"));
+
+            // Calculate days until rental ends
+            LocalDate today = LocalDate.now();
+            LocalDate end = rs.getDate("EndDate").toLocalDate();
+            int daysUntilEnd = (int) ChronoUnit.DAYS.between(today, end);
+            info.setDaysUntilEndDate(daysUntilEnd);
+
+            // Calculate days until final payment due (14 days after StartDate)
+            LocalDate start = rs.getDate("StartDate").toLocalDate();
+            LocalDate finalPaymentDue = start.plusDays(14);
+            int daysUntilFinal = (int) ChronoUnit.DAYS.between(today, finalPaymentDue);
+            info.setDaysUntilFinalPaymentDue(daysUntilFinal);
+
+            list.add(info);
+        }
+    }
+
+    return list;
+}
+    
+    public RentalOrderFullInfo getRentalOrderFullInfoById(int rentalOrderId) throws Exception {
+    String sql = """
+        SELECT r.RentalOrderID, r.AccountID, r.WarehouseID, r.StartDate, r.EndDate,
+               r.Deposit, r.TotalPrice, r.IsDepositPaid,
+               w.Name AS WarehouseName, 
+               (w.AddressLine + ', ' + w.Ward + ', ' + w.District) AS warehouseAddress,
+               c.FullName AS CustomerName, c.Email AS CustomerEmail,
+               CASE 
+                   WHEN EXISTS (
+                       SELECT 1 
+                       FROM Payment p 
+                       JOIN PaymentCategory pc ON p.PaymentCategoryID = pc.PaymentCategoryID
+                       WHERE p.RentalOrderID = r.RentalOrderID 
+                         AND pc.CategoryName = 'FinalPayment' 
+                         AND p.Status = 'Completed'
+                   ) THEN 1
+                   ELSE 0
+               END AS IsFinalPaid
+        FROM RentalOrder r
+        JOIN Warehouse w ON r.WarehouseID = w.WarehouseID
+        JOIN Account a ON r.AccountID = a.AccountID
+        JOIN Customer c ON a.AccountID = c.AccountID
+        WHERE r.RentalOrderID = ?
+    """;
+
+    try (Connection con = DBUtil.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, rentalOrderId);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                RentalOrderFullInfo info = new RentalOrderFullInfo();
+
+                info.setRentalOrderID(rs.getInt("RentalOrderID"));
+                info.setAccountID(rs.getInt("AccountId"));
+                info.setWarehouseID(rs.getInt("WarehouseID"));
+                info.setStartDate(rs.getDate("StartDate"));
+                info.setEndDate(rs.getDate("EndDate"));
+                info.setDeposit(rs.getDouble("Deposit"));
+                info.setTotalPrice(rs.getDouble("TotalPrice"));
+                info.setDepositPaid(rs.getBoolean("IsDepositPaid"));
+                info.setFinalPaid(rs.getBoolean("IsFinalPaid"));
+
+                info.setWarehouseName(rs.getString("WarehouseName"));
+                info.setCustomerName(rs.getString("CustomerName"));
+                info.setCustomerEmail(rs.getString("CustomerEmail"));
+
+                LocalDate today = LocalDate.now();
+                LocalDate start = rs.getDate("StartDate").toLocalDate();
+                LocalDate finalPaymentDue = start.plusDays(14);
+                int daysUntilFinal = (int) ChronoUnit.DAYS.between(today, finalPaymentDue);
+                info.setDaysUntilFinalPaymentDue(daysUntilFinal);
+
+                return info;
+            }
+        }
+    }
+    return null;
+}
+
+    public boolean deleteRentalOrderById(int rentalOrderId) throws Exception {
+    String sql = "DELETE FROM RentalOrder WHERE RentalOrderID = ?";
+    try (Connection c = DBUtil.getConnection();
+         PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setInt(1, rentalOrderId);
+        return ps.executeUpdate() > 0;
+    }
+}
 
 }
